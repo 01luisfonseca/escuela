@@ -1,0 +1,104 @@
+<div class="col-sm-12">
+	<div class="panel panel-primary" ng-controller='LiqCajaController as liqDia'>
+		<div class="panel-heading" ng-click="liqDia.mostrarVentana()">Liquidación diaria de caja</div>
+		<div class="panel-body desplazable" ng-show="liqDia.mostrar">
+			<div class="row">
+				<div class="col-md-4">
+					<form class="form" name="diaCalculo">
+						<div class="form-group">
+    						<label class="control-label">Fecha de liquidación.</label>
+            				<input type="date" class="form-control" ng-model="fechaAhora" ng-change="liqDia.verificarFechas()" >
+						</div>
+					</form>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-8">
+					<div class="panel panel-primary">
+						<div class="panel-body desplazable-grande">
+							<p><h3>Pensiones</h3> </p>
+							<div class="table-responsive">
+								<table class="table">
+									<tr>
+										<th>Factura</th>
+										<th>Alumno</th>
+										<th>Fecha creación</th>
+										<th>Valor</th>
+									</tr>
+									<tr ng-repeat="pension in pPensiones">
+										<td>//pension.numero_factura//</td>
+										<td>//liqDia.textoNombre(pension.alumnos.users.name,pension.alumnos.users.lastname)// <a ng-href="//liqDia.tLink(pension.alumnos_id,'pension')//" class="btn btn-primary btn-xs">Ver más</a></td>
+										<td>//pension.created_at//</td>
+										<td>//pension.valor|currency//</td>
+									</tr>
+								</table>
+							</div>
+							<p><h3>Matrículas</h3></p>
+							<div class="table-responsive">
+								<table class="table">
+									<tr>
+										<th>Factura</th>
+										<th>Alumno</th>
+										<th>Fecha creación</th>
+										<th>Valor</th>
+									</tr>
+									<tr ng-repeat="matricula in pMatriculas">
+										<td>//matricula.numero_factura//</td>
+										<td>//liqDia.textoNombre(matricula.alumnos.users.name,matricula.alumnos.users.lastname)// <a ng-href="//liqDia.tLink(matricula.alumnos_id,'matricula')//" class="btn btn-primary btn-xs">Ver más</a></td>
+										<td>//matricula.created_at//</td>
+										<td>//matricula.valor|currency//</td>
+									</tr>
+								</table>
+							</div>
+							<p><h3>Otros pagos</h3></p>
+							<div class="table-responsive">
+								<table class="table">
+									<tr>
+										<th>Factura</th>
+										<th>Alumno</th>
+										<th>Fecha creación</th>
+										<th>Valor</th>
+									</tr>
+									<tr ng-repeat="otrosPagos in pOpagos">
+										<td>//otrosPagos.numero_factura//</td>
+										<td>//liqDia.textoNombre(otrosPagos.alumnos.users.name,otrosPagos.alumnos.users.lastname)//</td>
+										<td>//otrosPagos.created_at//</td>
+										<td>//otrosPagos.valor|currency//</td>
+									</tr>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-4">
+					<div class="panel panel-info">
+						<div class="panel-heading"><h3>Totales</h3></div>
+						<div class="panel-body desplazable">
+							<div class="table-responsive">
+								<table class="table export-table">
+									<tr>
+										<td>Pensiones:</td>
+										<td>// Psumatoria | currency //</td>
+									</tr>
+									<tr>
+										<td>Matrículas:</td>
+										<td>// Msumatoria | currency //</td>
+									</tr>
+									<tr>
+										<td>Otros pagos:</td>
+										<td>// Osumatoria | currency//</td>
+									</tr>
+									<tr>
+										<td><h4>Total general:</h4></td>
+										<td><h4>// Psumatoria+Msumatoria+Osumatoria | currency//</h4></td>
+									</tr>
+								</table>
+							</div>
+							<a class="btn btn-primary" target="_blank" ng-href="// liqDia.imprimetirilla() //">Imprimir tirilla.</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

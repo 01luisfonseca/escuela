@@ -1,0 +1,79 @@
+<div ng-controller='rendimientoCrtl as rendi'>
+<p>Seleccione un título para ver mas detalles</p>
+<div class="row">
+	<div class="col-xs-3">
+		<ul class="nav nav-tabs tabs-left">
+			<li class="active"><a href="#home" data-toggle="tab">Explicación</a></li>
+			<li ng-repeat='nivel in alumno.data'><a ng-href="#pestana//$index//" data-toggle="tab" ng-click='obtenerNotasAlumno(nivel.id)'>//nivel.niveles.nombre_nivel//</a></li>
+		</ul>
+	</div>
+	<div class="col-xs-9">
+		<div class="tab-content desplazable-grande">
+			<div class="tab-pane active" id="home"><explicrendim-dir></explicrendim-dir></div>
+			<div ng-repeat='nivel in alumno.data' class="tab-pane" id="pestana//$index//">
+				<div class='panel panel-default' ng-repeat='materia in nivelSeleccionado.data.materias_has_niveles' ng-Init='materiaIndex=$index'>
+					<div class="panel-body">
+						<h4 style="color: green"><strong>//materia.materias.nombre_materia//</strong>. Profesor: <em>//materia.empleados.users.name// //materia.empleados.users.lastname//</em></h4>
+						<div class="table-responsive">
+						<table class="table table-bordered">
+							<tr>
+								<th ng-repeat='periodo in materia.niveles_has_periodos'>//periodo.periodos.nombre_periodo//</th>
+								<th>Definitiva</th>
+							</tr>
+							<tr>
+								<td ng-repeat='periodo in materia.niveles_has_periodos'>
+									<table class="table table-condensed">
+										<tr ng-repeat='indicador in periodo.indicadores'>
+											<th>//indicador.nombre//, <em>al //indicador.porcentaje//%</em></th>
+											<td>//indicador.descripcion//</td>
+											<td>//promedioIndicador(indicador.id)| number:2//</td>
+											<td><button type='button' class="btn btn-info btn-xs" data-toggle='modal' data-target='#regisinfo//indicador.id//'>Info</button>
+													<div class='modal fade' id="regisinfo//indicador.id//" tabindex="-1" role='dialog'>
+														<div class="modal-dialog">
+															<div class="modal-content">
+																<div class="modal-header">
+																	<button type="button" class="close" data-dismiss='modal' aria-hidden='true'>&times;</button>
+																	<h4>Información del indicador //indicador.nombre//</h4>
+																</div>
+																<div class="modal-body">
+																	<table class="table">
+																		<tr>
+																			<th>#</th>
+																			<th>Nombre</th>
+																			<th>Descripción</th>
+																			<th>Calificación</th>
+																			<th>Fecha creación</th>
+																			<th>Fecha actualización</th>
+																		</tr>
+																		<tr ng-repeat='tipo in indicador.tipo_nota'>
+																			<th>//$index//</th>
+																			<td>//tipo.nombre//</td>
+																			<td>//tipo.descripcion//</td>
+																			<td>//tipo.notas[0].calificacion| number:2//</td>
+																			<td>//tipo.notas[0].created_at//</td>
+																			<td>//tipo.notas[0].updated_at//</td>
+																		</tr>
+																	</table>
+																</div>
+															</div>
+														</div>
+													</div>
+											</td>
+										</tr>
+										<tr>
+											<th colspan="2">Definitiva Periodo</th>
+											<td colspan="2">//promedioPeriodo(periodo.id)| number:2//</td>
+										</tr>										
+									</table>
+								</td>
+								<td>//promedioMateria(materia.id)| number:2//</td>
+							</tr>
+						</table>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+</div>

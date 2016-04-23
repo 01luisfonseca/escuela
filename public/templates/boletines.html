@@ -1,0 +1,38 @@
+<div ng-controller='notasCtrl as notas'>
+	<div class="container-fluid">
+	<div class='row'>
+		<div class="container-fluid">
+		<div class="form-group">
+			<label class="col-sm-2 control-label">Elija un nivel.</label>
+			<div class="col-sm-8">
+				<select ng-model='nivelSelec' class='form-control' ng-change='buscarAlumnos()' >
+					<option ng-repeat='nivel in niveles.data' value='//nivel.id//'>// nivel.nombre_nivel //,</option>
+				</select>
+			</div>
+		</div>
+		</div>
+	</div>
+	<div class="row" ng-show="nivelSelec>0 && niveles.data.length>0">
+		<div class="container-fluid">
+		<div class="panel panel-default">
+  			<div class="panel-heading"><h4>Listado de alumnos por nivel.</h4></div>
+  			<div class="panel-body">
+  				Se presentarán los alumnos y los periodos asociados del nivel. Seleccione el periodo de cada alumno para generar el boletín por el periodo.
+    		</div>
+    		<div class="table-responsive">
+    		<table class="table">
+    			<tr>
+    				<th><h4>Alumnos</h4></th>
+    				<th ng-repeat='periodo in periodos.data'><h4>//periodo.nombre_periodo//</h4></th>
+    			</tr>
+    			<tr ng-repeat='alumno in alumnos.data'>
+    				<td><em>// alumno.lastname //, // alumno.name //</em></td>
+    				<td ng-repeat='periodo in periodos.data'><a ng-click="imprimeBoletin(alumno.id,periodo.id)" class='btn btn-info btn-xs'>Boletín de //periodo.nombre_periodo|lowercase//</a></td>
+    			</tr>
+  			</table>
+  			</div>
+		</div>
+		</div>						
+	</div>
+	</div>
+</div>

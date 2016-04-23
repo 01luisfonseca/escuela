@@ -1,0 +1,54 @@
+(function(){
+	var app=angular.module('boletines',[]).config(function($interpolateProvider){
+    		$interpolateProvider.startSymbol('//').endSymbol('//');
+	});
+	app.directive('boletinDir',function(){
+		return {
+			restrict: 'E',
+			templateUrl: '../../public/templates/boletines.html'
+		};
+	});
+	app.controller('notasCtrl',function($scope,$http,$window){
+		$scope.nivelSelec=0;
+		$scope.urlBase='/registro/boletin';
+		$scope.niveles={};
+		$scope.alumnos={};
+		$scope.periodos={};
+		$scope.imprimeBoletin=function(alumnoId,periodoId){
+			$window.open($scope.urlBase+'/'+alumnoId+'/'+periodoId);
+		};
+		$scope.buscarPeriodos=function(){
+			$http.get($scope.urlBase+'/periodos/'+$scope.nivelSelec).then(
+				function(response){
+					$scope.periodos=response;
+				},
+				function(response){
+					$scope.periodos=response;
+				}
+			);
+		};
+		$scope.buscarAlumnos=function(){
+			$scope.alumnos={};
+			$http.get($scope.urlBase+'/alumnos/'+$scope.nivelSelec).then(
+				function(response){
+					$scope.alumnos=response;
+					$scope.buscarPeriodos();
+				},
+				function(response){
+					$scope.alumnos=response;
+				}
+			);
+		};
+		$scope.getNiveles=function(){
+			$http.get($scope.urlBase+'/niveles').then(
+				function(response){
+					$scope.niveles=response;
+				},
+				function(response){
+					$scope.niveles=response;
+				}
+			);
+		};
+		$scope.getNiveles();
+	});
+})();

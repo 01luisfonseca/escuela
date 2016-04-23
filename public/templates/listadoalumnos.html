@@ -1,0 +1,39 @@
+<div ng-controller='listController as lista'>
+	<div class='row'>
+		<div class="form-group">
+			<label class="col-sm-2 control-label">Elija un nivel.</label>
+			<div class="col-sm-8">
+				<select ng-model='nivelElegido' ng-change='lista.buscarAlumnos()' class='form-control'>
+					<option ng-repeat='nivel in listaNiveles' value='//nivel.id//'>//nivel.nombre_nivel//</option>
+				</select>
+			</div>
+		</div>
+	</div>
+	<div class='row'>
+		<div class='panel desplazable'>
+		<div class='table-responsive'>
+			<table class='table table-condensed'>
+				<tr>
+					<th>Identificación</th>
+					<th>Apellidos</th>
+					<th>Nombres</th>
+					<th>Dirección</th>
+					<th>Teléfono</th>
+					<th>Acudiente</th>
+					<th>Acción</th>
+				</tr>
+				<tr ng-repeat='alumno in listaAlumnos'>
+					<td>// alumno.identificacion //</td>
+					<td>// alumno.lastname //</td>
+					<td>// alumno.name //</td>
+					<td>// alumno.direccion //</td>
+					<td>// alumno.telefono //</td>
+					<td>// alumno.acudiente //</td>
+					<td><a class="btn btn-default" ng-href="//lista.txtEditarUsuario(alumno.users_id)//">Editar usuario</a>  <a class="btn btn-default" ng-href="//lista.txtEditarAlumno(alumno.id)//">Editar alumno</a></td>
+				</tr>
+			</table>
+		</div>
+		</div>
+		<a class="btn btn-success" ng-href="//lista.exportarAlumnos(nivelElegido)//">Exportar a Excel</a>
+	</div>
+</div>

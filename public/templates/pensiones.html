@@ -1,0 +1,26 @@
+<div class="col-sm-12">
+<div class="panel panel-primary" ng-controller="PensionCtrl as pensiones">
+	<div class="panel-heading" ng-click="pensiones.mostrarVentana()">Pensiones registradas</div>
+	<div class="panel-body desplazable" ng-show="pensiones.mostrar">
+    	Información de pensiones en fecha descendente.
+	</div>
+	<div class="table-responsive" ng-show="pensiones.mostrar">
+	<table class="table">
+		<tr>
+			<th><a href class="btn btn-default" ng-click="order('numero_factura')">Factura <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a></th>
+			<th>Usuario</th>
+			<th><a href class="btn btn-default" ng-click="order('cancelado_at')">Fecha <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a></th>
+			<th>Valor</th>
+			<th>Diferencia</th>
+		</tr>
+		<tr ng-repeat="pension in registros | orderBy:predicate:reverse">
+			<td>//pension.numero_factura//</td>
+			<td>//pensiones.textoNombre(pension.alumnos.users.name,pension.alumnos.users.lastname)//. <a ng-href="//pensiones.tLink(pension.alumnos_id)//" class="btn btn-primary btn-xs">Ver más</a></td>
+			<td>//pension.cancelado_at//</td>
+			<td>//pension.valor|currency//</td>
+			<td>//pension.faltante|currency//</td>
+		</tr>
+	</table>
+	</div>
+</div>
+</div>
