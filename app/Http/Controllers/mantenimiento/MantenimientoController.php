@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\registro;
+namespace App\Http\Controllers\mantenimiento;
 
 use Illuminate\Http\Request;
 
@@ -31,9 +31,15 @@ use App\modelos\Users;
 
 use Validator;
 
+//Para limpieza
+use App\Helpers\NoOrphanRegisters;
+
 
 class MantenimientoController extends Controller
 {
-	public function getLimpiarHuerfanos(){}
+	public function getLimpiarHuerfanosTotal(){
+		$noOrphan= new NoOrphanRegisters;
+		return view('mantenimientosimple',['limpiados'=>$noOrphan->getLimpiarHuerfanosLiviano()]);
+	}
 	
 }

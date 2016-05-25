@@ -93,6 +93,9 @@
 				    		@if(Auth::user()->tipo_usuario_id>=6)<li><a href="{{route('gestion-pagos')}}" class="dropdown-toggle">Gestión central</a></li>@endif
 				    	</ul>
 				    </li>
+				    <li class="dropdown">
+				    	<a href="/mantenimiento/general" class="dropdown-toggle" data-toggle="dropdown" role="button"  aria-haspopup="true" aria-expanded="false">Mantenimiento General<span class="caret"></span></a>
+				    </li>
 				    @endif
 			    	@if(Auth::user()->tipo_usuario_id>=5)
 			    	<li class="dropdown">

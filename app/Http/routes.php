@@ -270,6 +270,11 @@ Route::group(['middleware'=>'auth'], function(){
 
 		});
 	});
+
+	Route::group(['prefix'=>'mantenimiento','namespace'=>'mantenimiento'],function(){
+		Route::get('/general','MantenimientoController@getLimpiarHuerfanosTotal');
+	});
+
 });
 
 

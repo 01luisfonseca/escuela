@@ -43,6 +43,18 @@ class NoOrphanRegisters implements NoOrphanRegistersContract
 		return $resultados;
 	}
 
+	public function getLimpiarHuerfanosLiviano(){
+		$resultados=$this->eliminarAlumnosHuerfanos();
+		$resultados+=$this->eliminarEmpleadosHuerfanos();
+		$resultados+=$this->eliminarMateriasHasNivelesHuerfanos();
+		$resultados+=$this->eliminarPeriodosHasNivelesHuerfanos();
+		$resultados+=$this->eliminarAsistenciasHuerfanos();
+		$resultados+=$this->eliminarIndicadoresHuerfanos();
+		$resultados+=$this->eliminarTiposHuerfanos();
+		$resultados+=$this->eliminarNotasHuerfanos();
+		return $resultados;
+	}
+
 	public function eliminarMateriasHasNivelesHuerfanos(){
 		$elementos=MateriasHasNiveles::all();
 		$marcado=array();
@@ -168,8 +180,19 @@ class NoOrphanRegisters implements NoOrphanRegistersContract
 		return $eliminados;
 	}
 
-	public function eliminarNotasHuerfanos(){
-		$elementos=Notas::all();
+	public function eliminarNotasHuerfanos($rango=500){
+		$obj=Notas::select('id')->where('id','>',0)->orderBy('id','asc')->get();
+		$registros=$obj[0]->id;
+		$numero=0;
+		for ($i=0; $i*$rango < $registros; $i++) { 
+			$numero+=$this->eliminarNotasHuerfanosPorRango($i*$rango,($i+1)*$rango);
+			usleep(200000);
+		}
+		return $numero;
+	}
+
+	private function eliminarNotasHuerfanosPorRango($idBajo=1,$idAlto=200){
+		$elementos=Notas::where('id','<',$idAlto)->where('id','>=',$idBajo)->get();
 		$marcado=array();
 		$eliminados=0;
 		foreach ($elementos as $elemento) {
