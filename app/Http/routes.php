@@ -272,7 +272,12 @@ Route::group(['middleware'=>'auth'], function(){
 	});
 
 	Route::group(['prefix'=>'mantenimiento','namespace'=>'mantenimiento'],function(){
-		Route::get('/general','MantenimientoController@getLimpiarHuerfanosTotal');
+		Route::get('/manual','MantenimientoController@getLimpiarHuerfanosTotal');
+		Route::get('/general',function(){
+			return view('mantenimientocompuesto');
+		});
+		Route::get('/highnota','MantenimientoController@highRegistroNotas');
+		Route::get('/limpiezanotas/{idBajo}/{idAlto}','MantenimientoController@getLimpiarNotasRango');
 	});
 
 });

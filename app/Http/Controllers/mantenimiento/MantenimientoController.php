@@ -41,5 +41,13 @@ class MantenimientoController extends Controller
 		$noOrphan= new NoOrphanRegisters;
 		return view('mantenimientosimple',['limpiados'=>$noOrphan->getLimpiarHuerfanosLiviano()]);
 	}
+	public function getLimpiarNotasRango($idBajo,$idAlto){
+		$noOrphan= new NoOrphanRegisters;
+		return $noOrphan->eliminarNotasHuerfanosPorRango($idBajo,$idAlto);
+	}
+	public function highRegistroNotas(){
+		$obj=Notas::select('id')->where('id','>','0')->orderBy('id','desc')->first();
+		return $obj->id;
+	}
 	
 }

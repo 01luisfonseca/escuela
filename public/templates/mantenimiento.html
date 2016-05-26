@@ -1,0 +1,7 @@
+<p>Estamos en el interior.</p> 
+<div ng-controller='mttoCtrl as mtto'>
+	<p>Total de registros en notas: {{registroNotas}}</p>
+	<ul><p>Lista de rangos de notas verificadas</p>
+		<li ng-repeat='recorrido in notasBorradas.recorridos'>Limite inferior: {{recorrido.low}}. Limite superior: {{recorrido.hi}}. Notas eliminadas: {{recorrido.eliminados}}. Estatus del servidor: {{recorrido.status}}.</li>
+	</ul>
+</div>

@@ -181,17 +181,16 @@ class NoOrphanRegisters implements NoOrphanRegistersContract
 	}
 
 	public function eliminarNotasHuerfanos($rango=500){
-		$obj=Notas::select('id')->where('id','>',0)->orderBy('id','asc')->get();
+		$obj=Notas::select('id')->where('id','>',0)->orderBy('id','desc')->get();
 		$registros=$obj[0]->id;
 		$numero=0;
 		for ($i=0; $i*$rango < $registros; $i++) { 
 			$numero+=$this->eliminarNotasHuerfanosPorRango($i*$rango,($i+1)*$rango);
-			usleep(200000);
 		}
 		return $numero;
 	}
 
-	private function eliminarNotasHuerfanosPorRango($idBajo=1,$idAlto=200){
+	public function eliminarNotasHuerfanosPorRango($idBajo=1,$idAlto=200){
 		$elementos=Notas::where('id','<',$idAlto)->where('id','>=',$idBajo)->get();
 		$marcado=array();
 		$eliminados=0;
