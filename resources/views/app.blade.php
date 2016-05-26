@@ -94,7 +94,10 @@
 				    	</ul>
 				    </li>
 				    <li class="dropdown">
-				    	<a href="/mantenimiento/general" class="dropdown-toggle" data-toggle="dropdown" role="button"  aria-haspopup="true" aria-expanded="false">Mantenimiento General<span class="caret"></span></a>
+				    	<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"  aria-haspopup="true" aria-expanded="false">Mantenimiento<span class="caret"></span></a>
+				    	<ul class="dropdown-menu">
+				    		@if(Auth::user()->tipo_usuario_id>=6)<li><a href="/mantenimiento/general" class="dropdown-toggle">General</a></li>@endif
+				    	</ul>
 				    </li>
 				    @endif
 			    	@if(Auth::user()->tipo_usuario_id>=5)
