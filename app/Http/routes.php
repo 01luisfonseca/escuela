@@ -160,6 +160,13 @@ Route::group(['middleware'=>'auth'], function(){
 				Route::get('/{alumnos_id}/{periodos_id}','BoletinController@getBoletin');
 			});
 
+			Route::group(['prefix'=>'analisis'],function(){
+				Route::group(['prefix'=>'notas'],function(){
+					Route::get('/',['as'=>'home_annotas','uses'=>'AnalisisNotasCtrl@getAnNotas']);
+					Route::get('/excel/{anio}','AnalisisNotasCtrl@descargaExcel');
+				});
+			});
+
 		});
 	});
 

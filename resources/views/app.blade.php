@@ -105,6 +105,9 @@
 			    		<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"  aria-haspopup="true" aria-expanded="false">Consulta de resultados <span class="caret"></span></a>
 			    		<ul class="dropdown-menu">
 				    		<li><a href="{{route('home_boletin')}}" class="dropdown-toggle">Boletines</a></li>
+				    		@if(Auth::user()->tipo_usuario_id>=6)
+				    		<li><a href="{{route('home_annotas')}}" class="dropdown-toggle">Análisis de notas</a></li>
+				    		@endif
 				    	</ul>
 				    </li>
 			    	@endif
