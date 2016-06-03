@@ -48,6 +48,7 @@ class AnalisisNotasCtrl extends Controller
 	}
 
 	public function descargaExcel($anio){
+<<<<<<< HEAD
 		$niveles=Niveles::with(['materias_has_niveles'=>function($query){
 			$query->with(['materias','niveles_has_periodos'=>function($query){
 				$query->with('periodos','indicadores.tipo_nota.notas');
@@ -55,5 +56,9 @@ class AnalisisNotasCtrl extends Controller
 		}])->where('id','>',0)->get();//Pendiente la integración de todas las notas para el promedio.
 		//Excel::create();
 		return $niveles->toJson();
+=======
+		$niveles=Niveles::all();//Pendiente la integración de todas las notas para el promedio.
+		return view('registro/annotas');
+>>>>>>> 89c99588a414fda2c8240ee9b5e5d31a876a01ad
 	}
 }
