@@ -164,6 +164,8 @@ Route::group(['middleware'=>'auth'], function(){
 				Route::group(['prefix'=>'notas'],function(){
 					Route::get('/',['as'=>'home_annotas','uses'=>'AnalisisNotasCtrl@getAnNotas']);
 					Route::get('/excel/{anio}','AnalisisNotasCtrl@descargaExcel');
+					Route::get('/niveles_periodos/{anio}','AnalisisNotasCtrl@obtenerNivelesPeriodos');
+					Route::post('/niveles_periodos/promedios','AnalisisNotasCtrl@calcularPromedios');
 				});
 			});
 

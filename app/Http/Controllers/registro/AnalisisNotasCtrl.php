@@ -12,6 +12,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use Barryvdh\DomPDF\Facade;
 use Barryvdh\DomPDF\PDF;
 use Log;
+use Illuminate\Support\Collection as Collection;
 
 //Carga de modelos
 
@@ -47,18 +48,59 @@ class AnalisisNotasCtrl extends Controller
 		return view('registro/annotas');
 	}
 
+	public function obtenerNivelesPeriodos($anio){
+		$niveles=Niveles::with(['materias_has_niveles'=>function($query){
+			$query->where('materias_id','<>','38')->with(['materias','niveles_has_periodos']);//Solo especifico al Lusadi
+		}])->get();
+		return $niveles->toJson();
+	}
+
+	public function calcularPromedios(Request $request){
+		$tabla=$request->input('ids');
+		$arrayFinal=[];
+		for ($i=0; $i < count($tabla)-1; $i++) { 
+			$objeto=NivelesHasPeriodos::with(['indicadores'=>function($query){
+				$query->with(['tipo_nota'=>function($query){
+					$query->with(['notas']);
+				}]);
+			}])->where('id','=',$tabla[$i])->get();
+			foreach ($objeto as $obj) {
+				$acumObj=0;
+				foreach ($obj->indicadores as $indicador) {
+					$acumTipo=0;
+					foreach ($indicador->tipo_nota as $tipo) {
+						$acumNota=0;
+						foreach ($tipo->notas as $nota) {
+							$acumNota+=$nota->calificacion;
+							//Log::info('Nota: '.$nota->calificacion);
+						}
+						$acNotDen=count($tipo->notas)!=0? count($tipo->notas) : 1;
+						$acumTipo+=$acumNota/$acNotDen;
+						Log::info($acumTipo+' con notas:'.count($tipo->notas));
+					}
+					$acTipDen=count($indicador->tipo_nota)!=0? count($indicador->tipo_nota) : 1;
+					$acumObj+=(($acumTipo/$acTipDen)*$indicador->porcentaje)/100;
+					//Log::info('Promedio Tipo:'.$acumTipo/count($indicador->tipo_nota));
+				}
+				array_push($arrayFinal, ['id'=>$obj->id,'promedio'=>$acumObj]);
+				Log::info('Acumulado Periodo: '.$acumObj);
+			}
+		}
+		$entrega=Collection::make($arrayFinal);
+		return $entrega->toJson();
+	}
+
 	public function descargaExcel($anio){
-<<<<<<< HEAD
 		$niveles=Niveles::with(['materias_has_niveles'=>function($query){
 			$query->with(['materias','niveles_has_periodos'=>function($query){
-				$query->with('periodos','indicadores.tipo_nota.notas');
+				$query->with(['indicadores']);
 			}]);
-		}])->where('id','>',0)->get();//Pendiente la integración de todas las notas para el promedio.
-		//Excel::create();
+		}])->get();
+		/*Excel::create('notas_'.$anio,function($excel){
+			$excel->sheet('Notas',function($sheet){
+				$sheet->row(1,['prueba']);
+			});
+		})->download('xlsx');*/
 		return $niveles->toJson();
-=======
-		$niveles=Niveles::all();//Pendiente la integración de todas las notas para el promedio.
-		return view('registro/annotas');
->>>>>>> 89c99588a414fda2c8240ee9b5e5d31a876a01ad
 	}
 }
