@@ -76,16 +76,17 @@ class AnalisisNotasCtrl extends Controller
 						}
 						$acNotDen=count($tipo->notas)!=0? count($tipo->notas) : 1;
 						$acumTipo+=$acumNota/$acNotDen;
-						Log::info($acumTipo+' con notas:'.count($tipo->notas));
+						//Log::info($acumTipo+' con notas:'.count($tipo->notas));
 					}
 					$acTipDen=count($indicador->tipo_nota)!=0? count($indicador->tipo_nota) : 1;
 					$acumObj+=(($acumTipo/$acTipDen)*$indicador->porcentaje)/100;
 					//Log::info('Promedio Tipo:'.$acumTipo/count($indicador->tipo_nota));
 				}
 				array_push($arrayFinal, ['id'=>$obj->id,'promedio'=>$acumObj]);
-				Log::info('Acumulado Periodo: '.$acumObj);
+				//Log::info('Acumulado Periodo: '.$acumObj);
 			}
 		}
+		//asort($arrayFinal);
 		$entrega=Collection::make($arrayFinal);
 		return $entrega->toJson();
 	}

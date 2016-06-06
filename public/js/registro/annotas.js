@@ -10,11 +10,12 @@
 	});
 	app.controller('exportCtrl',function($scope,$http,$window){
 		$scope.anios={};
-		$scope.NivPer={};
-		$scope.NivPerProm={};
+		$scope.NivPer={};// Niveles, materias y periodos
+		$scope.NivPerProm={}; // id de periodos y promedios
 		$scope.NivPerStatus=0;
 		$scope.NivPerPromStatus=0;
 		$scope.NivPerList=[];
+		$scope.datosCargados=false;
 
 		/*Manejo de url*/
 		var urlbaseNotas='/registro/analisis/notas';
@@ -25,6 +26,7 @@
 		$scope.getNivelPeriodo=function(anio){
 			$scope.NivPer={};
 			$scope.NivPerStatus=0;
+			$scope.datosCargados=false;
 			$http.get($scope.urlNivPer+'/'+anio)
 				.then(
 					function(response){
@@ -64,18 +66,22 @@
 			$http.post($scope.urlNivPer+'/promedios',objeto).then(
 				function(response){
 					$scope.NivPerProm=response.data;
-					$scope.NivPerStatus=response.status;
+					$scope.NivPerPromStatus=response.status;
+					$scope.datosCargados=true;
 					console.log('enviarNivPerList(). Respuesta de APi');
 					console.log(response);
+					$scope.unePromedios();
 				},
 				function(response){
-					$scope.NivPerStatus=response.status;
+					$scope.NivPerPromStatus=response.status;
 					console.log('enviarNivPerList(). Sin respuesta de APi');
 					console.log(response);
 				}
 			);
 		};
-
+		$scipe.unePromedios=function(){
+			//Pendiente por unir las listas.
+		};
 		$scope.DescargaExcel=function(anio){
 			$http.get($scope.urlExcel+'/'+anio)
 				.then(function(response){console.log(response);},function(response){console.log(response);});

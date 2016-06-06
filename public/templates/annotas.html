@@ -1,3 +1,6 @@
 <div ng-controller='exportCtrl'>
-	<a ng-click="DescargaExcel(2016)" class='btn btn-info btn-md'>Excel del 2016</a>
+	<h4 ng-hide='datosCargados'><em>Cargando información</em></h4>
+	<h4 ng-show='datosCargados'><em>Información cargada</em></h4>
+	<a ng-show='datosCargados' ng-click="DescargaExcel(2016)" class='btn btn-info btn-md'>Exportar a Excel del 2016</a>
+	<table></table>
 </div>
