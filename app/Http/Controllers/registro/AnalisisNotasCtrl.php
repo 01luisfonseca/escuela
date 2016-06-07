@@ -50,7 +50,7 @@ class AnalisisNotasCtrl extends Controller
 
 	public function obtenerNivelesPeriodos($anio){
 		$niveles=Niveles::with(['materias_has_niveles'=>function($query){
-			$query->where('materias_id','<>','38')->with(['materias','niveles_has_periodos']);//Solo especifico al Lusadi
+			$query->where('materias_id','<>','38')->with(['materias','niveles_has_periodos.periodos']);//Solo especifico al Lusadi
 		}])->get();
 		return $niveles->toJson();
 	}

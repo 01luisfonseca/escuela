@@ -2,5 +2,22 @@
 	<h4 ng-hide='datosCargados'><em>Cargando información</em></h4>
 	<h4 ng-show='datosCargados'><em>Información cargada</em></h4>
 	<a ng-show='datosCargados' ng-click="DescargaExcel(2016)" class='btn btn-info btn-md'>Exportar a Excel del 2016</a>
-	<table></table>
+	<div id='exportable' ng-show='datosCargados'><table>
+		<thead>
+			<tr>
+				<th>Nivel</th>
+				<th>Materia</th>
+				<th>Periodo</th>
+				<th>Promedio</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr ng-repeat='item in NivPerNormalizado'>
+				<td>// item.nivel //</td>
+				<td>// item.materia //</td>
+				<td>// item.periodo //</td>
+				<td>// item.promedio //</td>
+			</tr>
+		</tbody>
+	</table></div>
 </div>
