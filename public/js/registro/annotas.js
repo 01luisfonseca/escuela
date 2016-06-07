@@ -87,12 +87,15 @@
 			for (var i = $scope.NivPer.length - 1; i >= 0; i--) {
 				for (var j = $scope.NivPer[i].materias_has_niveles.length - 1; j >= 0; j--) {
 					for (var k = $scope.NivPer[i].materias_has_niveles[j].niveles_has_periodos.length - 1; k >= 0; k--) {
+						var number=$scope.buscaPromedios($scope.NivPer[i].materias_has_niveles[j].niveles_has_periodos[k].id);
+						number+='';
+						var numbRes=number.replace('.',',');
 						$scope.NivPerNormalizado.push(
 							{
 								nivel: $scope.NivPer[i].nombre_nivel,
 								materia: $scope.NivPer[i].materias_has_niveles[j].materias.nombre_materia,
 								periodo: $scope.NivPer[i].materias_has_niveles[j].niveles_has_periodos[k].periodos.nombre_periodo,
-								promedio: $scope.buscaPromedios($scope.NivPer[i].materias_has_niveles[j].niveles_has_periodos[k].id)
+								promedio: numbRes
 							}
 						);
 						procesos++;
