@@ -8,6 +8,11 @@
 			templateUrl: '../../public/templates/annotas.html'
 		};
 	});
+	app.controller('exportNivelCtrl',function($scope,$http,$window){
+		$scope.niveles={};
+	});
+
+	/* Para exportar la totalidad de niveles */
 	app.controller('exportCtrl',function($scope,$http,$window){
 		$scope.anios={};
 		$scope.NivPer={};// Niveles, materias y periodos

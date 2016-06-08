@@ -1,23 +1,35 @@
-<div ng-controller='exportCtrl'>
-	<h4 ng-hide='datosCargados'><em>Cargando información</em></h4>
-	<h4 ng-show='datosCargados'><em>Información cargada</em></h4>
-	<a ng-show='datosCargados' ng-click="DescargaExcel(2016)" class='btn btn-info btn-md'>Exportar a Excel del 2016</a>
-	<div id='exportable' ng-show='datosCargados'><table>
-		<thead>
-			<tr>
-				<th>Nivel</th>
-				<th>Materia</th>
-				<th>Periodo</th>
-				<th>Promedio</th>
-			</tr>
-		</thead>
-		<tbody>
-			<tr ng-repeat='item in NivPerNormalizado'>
-				<td>// item.nivel //</td>
-				<td>// item.materia //</td>
-				<td>// item.periodo //</td>
-				<td>// item.promedio //</td>
-			</tr>
-		</tbody>
-	</table></div>
+<div class="panel panel-default">
+	<div class="panel-heading">Exportar notas segun nivel elegido</div>
+	<div class="panel-body">
+		<div ng-controller='exportNivelCtrl'></div>
+	</div>
 </div>
+<div class="panel panel-default">
+	<div class="panel-heading"><h3>Exportar promedios por todos los niveles</h3></div>
+	<div class="panel-body">
+		<div ng-controller='exportCtrl'>
+			<h4 ng-hide='datosCargados'><em>Cargando información</em></h4>
+		<h4 ng-show='datosCargados'><em>Información cargada</em></h4>
+		<a ng-show='datosCargados' ng-click="DescargaExcel(2016)" class='btn btn-info btn-md'>Exportar a Excel del 2016</a>
+		<div id='exportable' ng-show='false'><table>
+			<thead>
+				<tr>
+					<th>Nivel</th>
+					<th>Materia</th>
+					<th>Periodo</th>
+					<th>Promedio</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr ng-repeat='item in NivPerNormalizado'>
+					<td>// item.nivel //</td>
+					<td>// item.materia //</td>
+					<td>// item.periodo //</td>
+					<td>// item.promedio //</td>
+				</tr>
+			</tbody>
+		</table></div>
+		</div>
+	</div>
+</div>
+
