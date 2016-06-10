@@ -1,7 +1,13 @@
 <div class="panel panel-default">
 	<div class="panel-heading"><h4>Exportar notas segun nivel elegido</h4></div>
 	<div class="panel-body">
-		<div ng-controller='exportNivelCtrl'></div>
+		<div ng-controller='exportNivelCtrl'>
+			<select ng-show='mostrarNiveles' name="niveles" ng-model='nivelSelec' ng-change='getNotas(nivelSelec)' class="form-control">
+				<option ng-repeat='nivel in niveles.data' value='// nivel.id //'>// nivel.nombre_nivel //</option>
+			</select>
+			<h5 ng-hide='mostrarNiveles'><em>Cargando niveles.</em></h5>
+			<p ng-show='debug'>//nivelSelec//</p>
+		</div>
 	</div>
 </div>
 <div class="panel panel-default">

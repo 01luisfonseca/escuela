@@ -48,6 +48,47 @@ class AnalisisNotasCtrl extends Controller
 		return view('registro/annotas');
 	}
 
+	public function getNiveles(){
+		$obj=Niveles::orderBy('nombre_nivel','asc')->get();
+		return $obj->toJson();
+	}
+
+	public function getNotasPromediadas($nivelId){
+		$objeto=Alumnos::select(
+		 	'users.name',
+		 	'users.lastname',
+		 	'niveles.nombre_nivel',
+		 	'alumnos.*')
+		->join('niveles','alumnos.niveles_id','=','niveles.id')
+		->join('users','alumnos.users_id','=','users.id')
+		->with(['niveles'=>function($query){
+			$query->with(['materias_has_niveles'=>function($query){
+				$query->with('materias','niveles_has_periodos.periodos');
+			}]);
+		}])->where('alumnos.niveles_id','=',$nivelId)->orderBy('users.lastname','asc')->get();
+        return $objeto->toJson();
+	}
+
+	public function getPromedioPeriodoAlumno($alumnosId,$periodoId){
+		$objeto=Indicadores::with(['tipo_nota'=>function($query) use ($alumnosId){
+				$query->with(['notas'=>function($query) use ($alumnosId){
+					$query->where('alumnos_id','=',$alumnosId);
+				}]);
+			}])->where('niveles_has_periodos_id','=',$periodoId)->get();
+		foreach ($objeto as $indicador) {
+			$porcentaje=$indicador->porcentaje/100;
+			$tipo_nota=0;
+			foreach ($indicador->tipo_nota as $tipo) {
+				$acumNota=0;
+				foreach ($tipo->notas as $nota) {
+					$acumNota+=$nota->calificacion;
+				}
+				$acumtipo
+			}
+		}
+		return $objeto->toJson();
+	}
+
 	public function obtenerNivelesPeriodos($anio){
 		$niveles=Niveles::with(['materias_has_niveles'=>function($query){
 			$query->where('materias_id','<>','38')->with(['materias','niveles_has_periodos.periodos']);//Solo especifico al Lusadi
@@ -92,16 +133,6 @@ class AnalisisNotasCtrl extends Controller
 	}
 
 	public function descargaExcel($anio){
-		$niveles=Niveles::with(['materias_has_niveles'=>function($query){
-			$query->with(['materias','niveles_has_periodos'=>function($query){
-				$query->with(['indicadores']);
-			}]);
-		}])->get();
-		/*Excel::create('notas_'.$anio,function($excel){
-			$excel->sheet('Notas',function($sheet){
-				$sheet->row(1,['prueba']);
-			});
-		})->download('xlsx');*/
-		return $niveles->toJson();
+
 	}
 }

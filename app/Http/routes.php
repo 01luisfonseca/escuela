@@ -164,8 +164,19 @@ Route::group(['middleware'=>'auth'], function(){
 				Route::group(['prefix'=>'notas'],function(){
 					Route::get('/',['as'=>'home_annotas','uses'=>'AnalisisNotasCtrl@getAnNotas']);
 					Route::get('/excel/{anio}','AnalisisNotasCtrl@descargaExcel');
-					Route::get('/niveles_periodos/{anio}','AnalisisNotasCtrl@obtenerNivelesPeriodos');
-					Route::post('/niveles_periodos/promedios','AnalisisNotasCtrl@calcularPromedios');
+
+					/* Grupo de informacion */
+					Route::group(['prefix'=>'info'],function(){
+						Route::get('/niveles','AnalisisNotasCtrl@getNiveles');
+						Route::get('/promedioporperiodo/{nivelId}','AnalisisNotasCtrl@getNotasPromediadas');
+						Route::get('/promedioporperiodo/alumno/{alumnosId}/periodo/{periodoId}','AnalisisNotasCtrl@getPromedioPeriodoAlumno');
+					});
+
+					/* Grupo de informacion por niveles y periodos */
+					Route::group(['prefix'=>'niveles_periodos'],function(){
+						Route::get('/{anio}','AnalisisNotasCtrl@obtenerNivelesPeriodos');
+						Route::post('/promedios','AnalisisNotasCtrl@calcularPromedios');
+					});
 				});
 			});
 

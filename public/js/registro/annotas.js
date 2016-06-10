@@ -8,12 +8,66 @@
 			templateUrl: '../../public/templates/annotas.html'
 		};
 	});
+
+	/*Para obtener notas por materia seleccionada*/
 	app.controller('exportNivelCtrl',function($scope,$http,$window){
+		$scope.debug=true; //Modificar para eliminar las advertencias de consola
 		$scope.niveles={};
+		$scope.nivelSelec=0;
+		$scope.mostrarNiveles=false;
+
+		/*Gestion de URL*/
+		$scope.urlbase='/registro/analisis/notas';
+		$scope.urlinfo=$scope.urlbase+'/info';
+
+		/* Funcion de informacion de consola */
+		$scope.log=function(objeto){
+			if ($scope.debug) {
+				console.log(objeto);
+			}
+		};
+
+		/* Funcion para cargar las notas segun el id del nivel */
+		$scope.getNotas=function(nivelId){
+			$http.get($scope.urlinfo+'/promedioporperiodo/'+nivelId).then(
+				function(response){
+					$scope.materias=response;
+					$scope.log('Responde materias al '+nivelId+':');
+					$scope.log($scope.materias);
+				},
+				function(response){
+					$scope.materias=response;
+					$scope.log('No responde materias');
+					$scope.log($scope.materias);
+				}
+			);
+		};
+
+		/* Obtener niveles */
+		$scope.getNiveles=function(anio){
+			$scope.mostrarNiveles=false;
+			$http.get($scope.urlinfo+'/niveles').then(
+				function(response){
+					$scope.niveles=response;
+					$scope.log('Responde Niveles:');
+					$scope.log($scope.niveles);
+					$scope.mostrarNiveles=true;
+				},
+				function(response){
+					$scope.niveles=response;
+					$scope.log('No responde niveles');
+					$scope.log($scope.niveles);
+				}
+			);
+		};
+
+		/* Funciones que se cargan al iniciar */
+		$scope.getNiveles();
 	});
 
 	/* Para exportar la totalidad de niveles */
 	app.controller('exportCtrl',function($scope,$http,$window){
+		$scope.debug=false; //Modificar para eliminar las advertencias de consola
 		$scope.anios={};
 		$scope.NivPer={};// Niveles, materias y periodos
 		$scope.NivPerProm={}; // id de periodos y promedios
@@ -28,6 +82,13 @@
 		$scope.urlExcel=urlbaseNotas+'/excel';
 		$scope.urlNivPer=urlbaseNotas+'/niveles_periodos';
 
+		/* Funcion de informacion de consola */
+		$scope.log=function(objeto){
+			if ($scope.debug) {
+				console.log(objeto);
+			}
+		};
+
 		/*Funcion para obtener la lista completa de miveles, materias, periodos */
 		$scope.getNivelPeriodo=function(anio){
 			$scope.NivPer={};
@@ -38,14 +99,14 @@
 					function(response){
 						$scope.NivPer=response.data;
 						$scope.NivPerStatus=response.status;
-						console.log('getNivelPer(). Respuesta de APi');
-						console.log($scope.NivPer);
+						$scope.log('getNivelPer(). Respuesta de APi');
+						$scope.log($scope.NivPer);
 						$scope.cargarPromedios();
 					},
 					function(response){
 						$scope.NivPerStatus=response.status;
-						console.log('getNivelPer(). Sin respuesta de APi');
-						console.log(response);
+						$scope.log('getNivelPer(). Sin respuesta de APi');
+						$scope.log(response);
 					});
 		};
 
@@ -61,10 +122,10 @@
 					}
 				}
 			}
-			console.log('cargarPromedios(). Resultados');
-			console.log('Lista:');
-			console.log($scope.NivPerList);
-			console.log('Procesos: '+procesos);
+			$scope.log('cargarPromedios(). Resultados');
+			$scope.log('Lista:');
+			$scope.log($scope.NivPerList);
+			$scope.log('Procesos: '+procesos);
 			$scope.enviarNivPerList();
 		};
 		$scope.enviarNivPerList=function(){
@@ -74,19 +135,19 @@
 					$scope.NivPerProm=response.data;
 					$scope.NivPerPromStatus=response.status;
 					$scope.datosCargados=true;
-					console.log('enviarNivPerList(). Respuesta de APi');
-					console.log(response);
+					$scope.log('enviarNivPerList(). Respuesta de APi');
+					$scope.log(response);
 					$scope.generarNormalizado();
 				},
 				function(response){
 					$scope.NivPerPromStatus=response.status;
-					console.log('enviarNivPerList(). Sin respuesta de APi');
-					console.log(response);
+					$scope.log('enviarNivPerList(). Sin respuesta de APi');
+					$scope.log(response);
 				}
 			);
 		};
 		$scope.generarNormalizado=function(){
-			console.log('Inicia generarNormalizado()');
+			$scope.log('Inicia generarNormalizado()');
 			$scope.NivPerNormalizado=[];
 			var procesos=0;
 			for (var i = $scope.NivPer.length - 1; i >= 0; i--) {
@@ -107,9 +168,9 @@
 					}
 				}
 			}
-			console.log('Normalizando:');
-			console.log($scope.NivPerNormalizado);
-			console.log('Procesos: '+procesos);
+			$scope.log('Normalizando:');
+			$scope.log($scope.NivPerNormalizado);
+			$scope.log('Procesos: '+procesos);
 		}
 
 		/* Funcion para buscar el promedio */
