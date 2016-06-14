@@ -7,6 +7,30 @@
 			</select>
 			<h5 ng-hide='mostrarNiveles'><em>Cargando niveles.</em></h5>
 			<p ng-show='debug'>//nivelSelec//</p>
+			<div class="progress" ng-show='progressBar()'>
+				<div class="progress-bar progress-bar-striped active" role='progressbar' aria-valuenow='// progresoIni-progresoFin //' aria-valuemin='0' aria-valuemax='//progresoIni//' style='width: // (progresoIni-progresoFin)*100/progresoIni | number:0 //%; min-width: 2em;'>// (progresoIni-progresoFin)*100/progresoIni | number:1 //%</div>
+			</div>
+			<a ng-show='descarga' ng-click="DescargaExcel(2016)" class='btn btn-info btn-md'>Exportar a Excel del 2016</a>
+			<div id='exportableAlumnos' ng-show='false'>
+				<table>
+					<thead>
+						<tr>
+							<th>NOMBRE</th>
+							<th>MATERIA</th>
+							<th>PERIODO</th>
+							<th>PROMEDIO</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr ng-repeat='alumno in arrayAlumnos'>
+							<td>// alumno.nombre_alumno //</td>
+							<td>// alumno.nombre_materia //</td>
+							<td>// alumno.nombre_periodo //</td>
+							<td>// alumno.promedio //</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
 		</div>
 	</div>
 </div>

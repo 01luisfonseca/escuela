@@ -75,18 +75,39 @@ class AnalisisNotasCtrl extends Controller
 					$query->where('alumnos_id','=',$alumnosId);
 				}]);
 			}])->where('niveles_has_periodos_id','=',$periodoId)->get();
+		$acumIndic=0;
 		foreach ($objeto as $indicador) {
 			$porcentaje=$indicador->porcentaje/100;
-			$tipo_nota=0;
+			$acumTipo=0;
+			$tempIndic=0;
 			foreach ($indicador->tipo_nota as $tipo) {
 				$acumNota=0;
 				foreach ($tipo->notas as $nota) {
 					$acumNota+=$nota->calificacion;
 				}
-				$acumtipo
+				$den=count($tipo->notas)?count($tipo->notas):1;
+				$acumTipo+=$acumNota/$den;
 			}
+			$den=count($indicador->tipo_nota)?count($indicador->tipo_nota):1;
+			$tempIndic=$acumTipo/$den;
+			$acumIndic+=$tempIndic*$porcentaje;
 		}
-		return $objeto->toJson();
+		return $acumIndic;
+	}
+
+	public function promedioPorLista($procesos,Request $request){
+		//Log::info($request);
+		$arrayFinal=array();
+		for ($i=0; $i < $procesos; $i++) { 
+			array_push($arrayFinal, [
+				'nombre_alumno'=>$request[$i]['nombre_alumno'],
+				'nombre_materia'=>$request[$i]['nombre_materia'],
+				'nombre_periodo'=>$request[$i]['nombre_periodo'],
+				'promedio'=>$this->getPromedioPeriodoAlumno($request[$i]['idAlm'],$request[$i]['idPer'])
+			]);
+		}
+		$entrega=Collection::make($arrayFinal);
+		return $entrega->toJson();
 	}
 
 	public function obtenerNivelesPeriodos($anio){

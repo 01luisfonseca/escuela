@@ -170,6 +170,7 @@ Route::group(['middleware'=>'auth'], function(){
 						Route::get('/niveles','AnalisisNotasCtrl@getNiveles');
 						Route::get('/promedioporperiodo/{nivelId}','AnalisisNotasCtrl@getNotasPromediadas');
 						Route::get('/promedioporperiodo/alumno/{alumnosId}/periodo/{periodoId}','AnalisisNotasCtrl@getPromedioPeriodoAlumno');
+						Route::post('/promedioporlista/{procesos}','AnalisisNotasCtrl@promedioPorLista');
 					});
 
 					/* Grupo de informacion por niveles y periodos */

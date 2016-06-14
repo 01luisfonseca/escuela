@@ -11,10 +11,17 @@
 
 	/*Para obtener notas por materia seleccionada*/
 	app.controller('exportNivelCtrl',function($scope,$http,$window){
-		$scope.debug=true; //Modificar para eliminar las advertencias de consola
+		$scope.debug=false; //Modificar para eliminar las advertencias de consola
 		$scope.niveles={};
 		$scope.nivelSelec=0;
 		$scope.mostrarNiveles=false;
+		$scope.materias={};
+		$scope.arrayAlumnos=[];
+		$scope.arrayTempo=[];
+		$scope.arrayAuxiliar=[];
+		$scope.progresoIni=0;
+		$scope.progresoFin=0;
+		$scope.descarga=false;
 
 		/*Gestion de URL*/
 		$scope.urlbase='/registro/analisis/notas';
@@ -27,13 +34,35 @@
 			}
 		};
 
+		/* Funcion para mostrar la barra de estado */
+		$scope.progressBar=function(){
+			if($scope.progresoIni == $scope.progresoFin || $scope.progresoFin==0){
+				return false;
+			}
+			return true;
+		};
+
+		/* Funcion para generar excel */
+		$scope.DescargaExcel=function(){
+			var blob=new Blob([document.getElementById('exportableAlumnos').innerHTML],
+			{
+				type:'application/vnd.opexmlformats-officedocument.spreadsheetml.sheet;charset=utf-8'
+			});
+			saveAs(blob, "ReporteNivel.xls");
+		};
+
 		/* Funcion para cargar las notas segun el id del nivel */
 		$scope.getNotas=function(nivelId){
+			$scope.arrayAlumnos=[];
+			$scope.arrayTempo=[];
+			$scope.arrayAuxiliar=[];
+			$scope.descarga=false;
 			$http.get($scope.urlinfo+'/promedioporperiodo/'+nivelId).then(
 				function(response){
 					$scope.materias=response;
 					$scope.log('Responde materias al '+nivelId+':');
 					$scope.log($scope.materias);
+					$scope.crearTablaExportar();
 				},
 				function(response){
 					$scope.materias=response;
@@ -41,6 +70,71 @@
 					$scope.log($scope.materias);
 				}
 			);
+		};
+		$scope.crearTablaExportar=function(){
+			for (var i = $scope.materias.data.length - 1; i >= 0; i--) {
+				for (var j = $scope.materias.data[i].niveles.materias_has_niveles.length - 1; j >= 0; j--) {
+					for (var k = $scope.materias.data[i].niveles.materias_has_niveles[j].niveles_has_periodos.length - 1; k >= 0; k--) {
+						$scope.arrayTempo.push({
+							idAlm: $scope.materias.data[i].id,
+							nombre_alumno: $scope.materias.data[i].lastname+','+$scope.materias.data[i].name,
+							nombre_materia: $scope.materias.data[i].niveles.materias_has_niveles[j].materias.nombre_materia,
+							idPer: $scope.materias.data[i].niveles.materias_has_niveles[j].niveles_has_periodos[k].id,
+							nombre_periodo: $scope.materias.data[i].niveles.materias_has_niveles[j].niveles_has_periodos[k].periodos.nombre_periodo,
+							promedio: 0
+						});
+					}
+				}
+			}
+			$scope.log('Tabla creada');
+			$scope.log($scope.arrayTempo);
+			$scope.progresoIni=$scope.arrayTempo.length;
+			$scope.progresoFin=$scope.progresoIni;
+			$scope.buscarPromPorIds($scope.arrayTempo);
+		};
+		$scope.buscarPromPorIds=function(arr){
+			if(arr.length>0){
+				//$scope.log('Inicia funcion buscarPromPorIds()');
+				var objeto=arr[0];
+			$http.get($scope.urlinfo+'/promedioporperiodo/alumno/'+objeto.idAlm+'/periodo/'+objeto.idPer).then(
+				function(response){
+					$scope.arrayAlumnos.push({
+						idAlm:objeto.idAlm,
+						idPer:objeto.idPer,
+						nombre_materia:objeto.nombre_materia,
+						nombre_alumno:objeto.nombre_alumno,
+						nombre_periodo:objeto.nombre_periodo,
+						promedio:response.data
+					});
+					$scope.progresoFin--;
+					if ($scope.progresoFin==0) {
+						$scope.log('Progreso arrayAlumnos finalizado');
+						$scope.log($scope.arrayAlumnos);
+					}
+					var arrTem=arr.shift();
+					//$scope.log('Estado de progresoFin: '+$scope.progresoFin);
+					//$scope.log(arr);
+					$scope.buscarPromPorIds(arr);
+				},
+				function(response){
+					$scope.log('No hay respuesta para alumno: '+idAlm+', y Periodo: '+idPer);
+					$scope.progresoFin--;
+					var arrTem=arr.shift();
+					$scope.log('Estado de progresoFin: '+$scope.progresoFin);
+					//$scope.log(arr);
+					$scope.buscarPromPorIds(arr);				
+				}
+			);}else{
+				$scope.cambiaComa();
+			}
+		}
+		$scope.cambiaComa=function(){
+			for (var i = $scope.arrayAlumnos.length - 1; i >= 0; i--) {
+				var number=$scope.arrayAlumnos[i].promedio+'';
+				var numbRes=number.replace('.',',');
+				$scope.arrayAlumnos[i].promedio=numbRes;
+			}
+			$scope.descarga=true;
 		};
 
 		/* Obtener niveles */
