@@ -1,5 +1,7 @@
 (function(){
-	var app=angular.module('mantenimiento',[]);
+	var app=angular.module('mantenimiento',[]).config(function($interpolateProvider){
+    		$interpolateProvider.startSymbol('//').endSymbol('//');
+    	});
 	app.directive('mttoDir',function(){
 		return {
 			restrict: 'E',
@@ -8,17 +10,29 @@
 	});	
 	app.controller('mttoCtrl',function($scope,$http){
 		$scope.registroNotas={};
-		$scope.notasBorradas={recorridos:[]};
-		$scope.rangoBusqueda=500;
+		$scope.notasBorradas=[];
+		$scope.rangoBusqueda=1000;
+		$scope.estadoRevision=0;
+		$scope.procesoFinal=false;
 		$scope.eliminarNotasHuerfanas=function(){
-			for (var i = 0; i*$scope.rangoBusqueda < $scope.registroNotas; i++) {
-				$scope.buscarRangoNotas(i*$scope.rangoBusqueda,(i+1)*$scope.rangoBusqueda);
-			}
+			$scope.procesoFinal=false;
+			$scope.buscarRangoNotas(0,$scope.rangoBusqueda);
 		};
 		$scope.buscarRangoNotas=function(idBajo,idAlto){
 			$http.get('/mantenimiento/limpiezanotas/'+idBajo+'/'+idAlto).then(
 				function(response){
-					$scope.notasBorradas.recorridos.push={low:idBajo,hi:idAlto,eliminados:response.data,status:response.status};
+					$scope.notasBorradas.push={low:idBajo,hi:idAlto,eliminados:response.data,status:response.status};
+					if (response.data>0) {
+						$scope.buscarRangoNotas(idBajo,idAlto);
+					}else{
+						if(idAlto-$scope.rangoBusqueda<=$scope.registroNotas){
+							$scope.estadoRevision=idAlto;
+							$scope.buscarRangoNotas(idAlto+1,$scope.rangoBusqueda+idAlto);
+						}else{
+							$scope.procesoFinal=true;
+						}
+						
+					}
 				},
 				function(response){
 					$scope.notasBorradas.recorridos.push={low:idBajo,hi:idAlto,eliminados:0,status:response.status};
@@ -28,7 +42,7 @@
 		$scope.cargarRegistroNotas=function(){
 			$http.get('/mantenimiento/highnota').then(
 				function(response){$scope.registroNotas=response.data},
-				function(response){$scope.registroNotas=response.status}
+				function(response){$scope.registroNotas=0}
 			);
 		};
 		$scope.cargarRegistroNotas();
