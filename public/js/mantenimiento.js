@@ -9,19 +9,26 @@
 		};
 	});	
 	app.controller('mttoCtrl',function($scope,$http){
+		$scope.debug=true;
 		$scope.registroNotas={};
 		$scope.notasBorradas=[];
 		$scope.rangoBusqueda=1000;
 		$scope.estadoRevision=0;
 		$scope.procesoFinal=false;
+		$scope.log=function(objeto){
+			if ($scope.debug) {
+				console.log(objeto);
+			}
+		};
 		$scope.eliminarNotasHuerfanas=function(){
 			$scope.procesoFinal=false;
 			$scope.buscarRangoNotas(0,$scope.rangoBusqueda);
 		};
 		$scope.buscarRangoNotas=function(idBajo,idAlto){
+			$scope.log($scope.notasBorradas);
 			$http.get('/mantenimiento/limpiezanotas/'+idBajo+'/'+idAlto).then(
 				function(response){
-					$scope.notasBorradas.push={low:idBajo,hi:idAlto,eliminados:response.data,status:response.status};
+					$scope.notasBorradas.push({low:idBajo,hi:idAlto,eliminados:response.data,status:response.status});
 					if (response.data>0) {
 						$scope.buscarRangoNotas(idBajo,idAlto);
 					}else{
@@ -35,7 +42,7 @@
 					}
 				},
 				function(response){
-					$scope.notasBorradas.recorridos.push={low:idBajo,hi:idAlto,eliminados:0,status:response.status};
+					$scope.notasBorradas.recorridos.push({low:idBajo,hi:idAlto,eliminados:0,status:response.status});
 				}
 			);
 		};

@@ -1,30 +1,29 @@
-<p>Estamos en el interior.</p> 
 <div ng-controller='mttoCtrl as mtto'>
 	<p>Total de registros en notas: {{registroNotas}}</p>
 	<p><a href="" class='btn btn-warning' ng-click="eliminarNotasHuerfanas()">Iniciar limpieza</a></p>
 	<div class="progress" ng-hide='procesoFinal'>
-  		<div class="progress-bar" role="progressbar" aria-valuenow="// estadoRevision //" aria-valuemin="0" aria-valuemax="// registroNotas //" style="width: // estadoRevision*100/registroNotas //%;">
+  	<div class="progress-bar" role="progressbar" aria-valuenow="// estadoRevision //" aria-valuemin="0" aria-valuemax="// registroNotas //" style="width: // estadoRevision*100/registroNotas //%;">
     	<span class="sr-only">// estadoRevision*100/registroNotas //% Complete</span>
   	</div>
-  	<div ng-show='procesoFinal'>
-  		<table class="table">
-  		<thead>
-  			<tr>
-  				<th>Id inicial</th>
-  				<th>Id Final</th>
-  				<th>Registros eliminados</th>
-  				<th>Estado de consulta</th>
-  			</tr>
-  		</thead>
-  		<tbody>
-  			<tr ng-repeat='borrado in notasBorradas'>
-  				<td>// borrado.low //</td>
-  				<td>// borrado.hi //</td>
-  				<td>// borrado.eliminados //</td>
-  				<td>// borrado.status //</td>
-  			</tr>
-  		</tbody>
-		</table>
-  	</div>
+</div>
+<div ng-show='true'  class='desplazable'>
+      <table class="table">
+      <thead>
+        <tr>
+          <th>Id inicial</th>
+          <th>Id Final</th>
+          <th>Registros eliminados</th>
+          <th>Estado de consulta</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-repeat='borrado in notasBorradas'>
+          <td>// borrado.low //</td>
+          <td>// borrado.hi //</td>
+          <td>// borrado.eliminados //</td>
+          <td>// borrado.status //</td>
+        </tr>
+      </tbody>
+    </table>
 </div>
 </div>
