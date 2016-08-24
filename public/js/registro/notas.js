@@ -248,7 +248,9 @@
 			);
 		};
 		$scope.buscarAlumnosNotas=function(){
-			$http.get('/registro/notas/materias_asignadas/periodos/alumnos/'+$scope.periodoSeleccionado).then(
+            $scope.cargando=false;
+            $scope.postBuscarNotas();
+			/*$http.get('/registro/notas/materias_asignadas/periodos/alumnos/'+$scope.periodoSeleccionado).then(
 				function(response){
 					$scope.alumnos=response.data;
 					$scope.registroIndicador.status=response.status;
@@ -257,7 +259,7 @@
 				},function(response){
 					$scope.registroIndicador.status=response.status;
 				}
-			);
+			);*/
 		};
 		this.buscarMateriasAsignadas=function(){
 			$http.get('/registro/notas/materias_asignadas').then(

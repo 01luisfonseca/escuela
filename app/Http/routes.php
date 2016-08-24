@@ -129,7 +129,7 @@ Route::group(['middleware'=>'auth'], function(){
 				Route::get('/materias_asignadas/periodos/{id}','NotasController@getNivelesHasPeriodos');
 				Route::get('/materias_asignadas/periodos/alumnos/{idNivelesHasPeriodos}','NotasController@getAlumnosConNotas');
 				Route::get('/materias_asignadas','NotasController@getMateriasHasNiveles');
-				Route::get('/materias_asignadas/periodos/notas/{id}','NotasController@getIndicadores');
+                Route::get('/materias_asignadas/periodos/indicadores/{nivPerid}','NotasController@getOnlyIndicadores');				Route::get('/materias_asignadas/periodos/notas/{id}','NotasController@getIndicadores');
 				Route::get('/materias_asignadas/periodos/indicadores/{id}/delete','NotasController@borrarIndicador');
 				Route::get('/materias_asignadas/periodos/indicadores/tipo_nota/{id}/delete','NotasController@delTipoNotas');
 				Route::post('/materias_asignadas/periodos/indicadores/{nivelesInPeriodosId}','NotasController@setIndicadores');

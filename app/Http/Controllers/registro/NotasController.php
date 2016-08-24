@@ -93,6 +93,17 @@ class NotasController extends Controller
             ->get();
         return $objeto->toJson();
     }
+    
+    public function getOnlyIndicadores($nivPerid){
+        $objeto=Indicadores::with(['periodos',
+                    'materias_has_niveles',
+                    'materias_has_niveles.materias',
+                    'materias_has_niveles.niveles'
+                    ])
+            ->where('niveles_has_periodos_id','=',$nivPerid)
+            ->get();
+        return $objeto->toJson();
+    }
 
     public function setIndicadores($nivelesInPeriodosId,Request $request){
         $estado=false;
@@ -237,6 +248,17 @@ class NotasController extends Controller
     }
 
     public function getAlumnosConNotas($idNivelesHasPeriodos){
+        $objeto=Alumnos::select('alumnos.id','users.name','users.lastname')
+            ->join('users','alumnos.users_id','=','users.id')
+            ->join('niveles','alumnos.niveles_id','=','niveles.id')
+            ->join('materias_has_niveles','niveles.id','=','materias_has_niveles.niveles_id')
+            ->join('niveles_has_periodos','materias_has_niveles.id','=','niveles_has_periodos.materias_has_niveles_id')
+            ->with('notas.tipo_nota.indicadores')
+            ->where('niveles_has_periodos.id','=',$idNivelesHasPeriodos)->orderBy('users.lastname','asc')->get();
+        return $objeto->toJson();
+    }
+    
+    public function getAlumnosConNotasAnterior($idNivelesHasPeriodos){
         $objeto=Alumnos::select('alumnos.id','users.name','users.lastname')
             ->join('users','alumnos.users_id','=','users.id')
             ->join('niveles','alumnos.niveles_id','=','niveles.id')
