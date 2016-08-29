@@ -73,14 +73,21 @@ class NotasController extends Controller
     }
 
     public function getIndicadores($id){
-        $objeto=NivelesHasPeriodos::with([
+        $nivelId=0;
+        $creado=false;
+        try{
+             $objeto=NivelesHasPeriodos::with([
                     'indicadores'=>function($query){
                         $query->orderBy('id','asc');
                         $query->with(['tipo_nota'=>function($query){
                             $query->orderBy('id','asc');
                             $query->with(['notas'=>function($query){
                                 $query->orderBy('id','asc');
-                                $query->with('alumnos.users');
+                                $query->with(['alumnos'=>function($query){
+                                    $query->with(['users'=>function($query){
+                                        $query->select('id','name','lastname');
+                                    }]);
+                                }]);
                             }]);
                         }]);
                     },
@@ -88,10 +95,36 @@ class NotasController extends Controller
                     'materias_has_niveles',
                     'materias_has_niveles.materias',
                     'materias_has_niveles.niveles'
-                ])
-            ->where('id','=',$id)
-            ->get();
-        return $objeto->toJson();
+                ])->where('id','=',$id)->get();
+            $nivelId=$objeto[0]->materias_has_niveles->niveles->id;
+            $alumnos=Alumnos::where('niveles_id','=',$nivelId)->get();
+            //dd($objeto);
+            foreach ($alumnos as $alumno) {
+                foreach ($objeto[0]->indicadores as $indicador) {
+                    foreach ($indicador->tipo_nota as $tipo) {
+                        $encontrado=false;
+                        $tipoNotaId=$tipo->id;
+                        foreach ($tipo->notas as $nota) {
+                            if ($alumno->id==$nota->alumnos->id) {
+                                $encontrado=true;
+                            }
+                        }
+                        if (!$encontrado) {
+                            $this->setNotaAlumno($tipo->id,$alumno->id)?Log::info('Creado alumno nuevo: '.$alumno->id.'; tipo de nota: '.$tipo->id):Log::info('Error de creación de nota de alumno nuevo: '.$alumno->id.'; tipo de nota: '.$tipo->id);
+                            $creado=true;
+                        }
+                    }
+                }
+            }
+            if(!$creado){
+                return $objeto->toJson();
+            }
+            return $this->getIndicadores($id);
+            
+        }catch(Exception $e){
+            Log::info('Ha pasado un error en GetIndicadores');
+        }
+       
     }
     
     public function getOnlyIndicadores($nivPerid){
@@ -217,6 +250,20 @@ class NotasController extends Controller
     }
 
     public function setNotas($tipoNotaId,Request $request=null){}
+    
+    public function setNotaAlumno($tipoNotaId,$alumnoId){
+        if ($tipoNotaId && $alumnoId) {
+            $objetos=new Notas;
+            $objetos->tipo_nota_id=$tipoNotaId;
+            $objetos->nombre_nota='ND';
+            $objetos->descripcion='';
+            $objetos->calificacion=0;
+            $objetos->alumnos_id=$alumnoId;
+            $objetos->save();
+            return true;
+        }
+        return false;
+    }
 
     public function setNotaBasica($tipoNotaId,Request $request=null){
         $estado=false;
@@ -258,14 +305,13 @@ class NotasController extends Controller
         return $objeto->toJson();
     }
     
-    public function getAlumnosConNotasAnterior($idNivelesHasPeriodos){
-        $objeto=Alumnos::select('alumnos.id','users.name','users.lastname')
-            ->join('users','alumnos.users_id','=','users.id')
-            ->join('niveles','alumnos.niveles_id','=','niveles.id')
-            ->join('materias_has_niveles','niveles.id','=','materias_has_niveles.niveles_id')
-            ->join('niveles_has_periodos','materias_has_niveles.id','=','niveles_has_periodos.materias_has_niveles_id')
-            ->with('notas.tipo_nota.indicadores')
-            ->where('niveles_has_periodos.id','=',$idNivelesHasPeriodos)->orderBy('users.lastname','asc')->get();
+    public function getAlumnosEnNivel($idNiveles){
+        $objeto=Alumnos::where('niveles_has_periodos.id','=',$idNivelesHasPeriodos)->orderBy('users.lastname','asc')->get();
+        return $objeto->toJson();
+    }
+    
+    public function rellenarAlumnosNuevosNivel(Request $request){
+        $objeto=Alumnos::where('niveles_has_periodos.id','=',$idNivelesHasPeriodos)->orderBy('users.lastname','asc')->get();
         return $objeto->toJson();
     }
 

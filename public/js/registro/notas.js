@@ -19,7 +19,7 @@
 		$scope.activaNotas=false;
 		$scope.cargandoNotas=false;
 		$scope.materiaSeleccionada=0;
-		$scope.periodoSeleccionado=0;
+		$scope.periodoSeleccionado=0; // Periodo Seleccionado
 		$scope.notasInPeriodo={};
 		$scope.indicadores={};
 		$scope.alumnos={};
@@ -28,9 +28,14 @@
 		$scope.registroIndicador={};
 		$scope.registroIndicador.mensaje='';
 		$scope.verificador='Inicia. ';
+        $scope.alumnosNivel={};
+        $scope.solicitud=new Array;
+        $scope.info={};
 		$scope.inicializaVar=function(){
 			$scope.indicadores={};
 			$scope.alumnos={};
+            $scope.solicitud=new Array;
+            $scope.alumnosNivel={};
 			$scope.nIndicador={};
 			$scope.registroIndicador={};
 			$scope.registroIndicador.mensaje='';
@@ -249,18 +254,26 @@
 		};
 		$scope.buscarAlumnosNotas=function(){
             $scope.cargando=false;
+            $scope.alumnosNivel={};
             $scope.postBuscarNotas();
-			/*$http.get('/registro/notas/materias_asignadas/periodos/alumnos/'+$scope.periodoSeleccionado).then(
-				function(response){
-					$scope.alumnos=response.data;
-					$scope.registroIndicador.status=response.status;
-					$scope.cargando=false;
-					$scope.postBuscarNotas();
-				},function(response){
-					$scope.registroIndicador.status=response.status;
-				}
-			);*/
 		};
+        $scope.actNuevosUsuarios=function(length){
+            if(length<0){
+                return 1;
+            }
+            $http.post('/materias_asignadas/periodos/alumnos/rellenar',$scope.solicitud[length]).then(
+            function(response){
+                return $scope.actNuevosUsuarios(length-1)+1;
+            });
+        };
+        $scope.hayAlumno=function(id){
+            for (var i=0; i<$scope.promedios[0].alumnos.length; i++){
+                if(id==$scope.promedios[0].alumnos[i].id){
+                   return true;
+                }
+            }
+            return false;
+        };
 		this.buscarMateriasAsignadas=function(){
 			$http.get('/registro/notas/materias_asignadas').then(
 				function(response){
