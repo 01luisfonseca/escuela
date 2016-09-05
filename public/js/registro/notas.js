@@ -74,7 +74,7 @@
 					$scope.promedios[x].alumnos[i].promedio=$scope.promedios[x].alumnos[i].promedio/$scope.indicadores[x].tipo_nota.length;
 				}
 			}
-            if(typeof($scope.promedios.alumnos)!='undefined'){
+            if(typeof($scope.promedios[0].alumnos)!='undefined'){
                for (var i = 0; i < $scope.promedios[0].alumnos.length; i++) {
                    $scope.promedios[0].alumnos[i].definitiva=$scope.calculoDefinitiva(i);
                } 
