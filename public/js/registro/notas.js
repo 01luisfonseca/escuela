@@ -74,15 +74,13 @@
 					$scope.promedios[x].alumnos[i].promedio=$scope.promedios[x].alumnos[i].promedio/$scope.indicadores[x].tipo_nota.length;
 				}
 			}
-            if($scope.promedios[0].alumnos.length){
+            if(typeof($scope.promedios.alumnos)!='undefined'){
                for (var i = 0; i < $scope.promedios[0].alumnos.length; i++) {
                    $scope.promedios[0].alumnos[i].definitiva=$scope.calculoDefinitiva(i);
                } 
             }else{
                 console.log("No hay alumnos a mostrar.");
-                console.log('$scope.promedios[0].alumnos.length =');
-                console.log($scope.promedios[0].alumnos.length);
-
+                console.log('$scope.promedios[0].alumnos.length no arroja nada en notas.js Linea 77.');
             }
 			
 		};
