@@ -74,9 +74,17 @@
 					$scope.promedios[x].alumnos[i].promedio=$scope.promedios[x].alumnos[i].promedio/$scope.indicadores[x].tipo_nota.length;
 				}
 			}
-			for (var i = 0; i < $scope.promedios[0].alumnos.length; i++) {
-				$scope.promedios[0].alumnos[i].definitiva=$scope.calculoDefinitiva(i);
-			}
+            if($scope.promedios[0].alumnos.length){
+               for (var i = 0; i < $scope.promedios[0].alumnos.length; i++) {
+                   $scope.promedios[0].alumnos[i].definitiva=$scope.calculoDefinitiva(i);
+               } 
+            }else{
+                console.log("No hay alumnos a mostrar.");
+                console.log('$scope.promedios[0].alumnos.length =');
+                console.log($scope.promedios[0].alumnos.length);
+
+            }
+			
 		};
 		$scope.actNota=function($id,$calificacion){
 			$http.post('/registro/notas/materias_asignadas/periodos/indicadores/tipo_nota/notas/'+$id+'/'+$calificacion+'/actualizar').then(
