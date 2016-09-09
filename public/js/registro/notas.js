@@ -1,295 +1,308 @@
 (function(){
-	var app=angular.module('notas',[]).config(function($interpolateProvider){
-    		$interpolateProvider.startSymbol('//').endSymbol('//');
-	});
-	app.directive('notasDir',function(){
-		return {
-			restrict: 'E',
-			templateUrl: '../../public/templates/notas.html'
-		};
-	});
-	app.controller('notasCtrl',function($scope,$http,$window){
-		$scope.cargando=false;
-		$scope.mensajeTipo='';
-		$scope.ventanaSeleccionada=0;
-		$scope.promedios=new Array;
-		$scope.materiasInNiveles={};
-		$scope.nivelesInPeriodos={};
-		$scope.activaPeriodos=false;
-		$scope.activaNotas=false;
-		$scope.cargandoNotas=false;
-		$scope.materiaSeleccionada=0;
-		$scope.periodoSeleccionado=0; // Periodo Seleccionado
-		$scope.notasInPeriodo={};
-		$scope.indicadores={};
-		$scope.alumnos={};
-		$scope.nIndicador={};
-		$scope.porcentajeMaximo=100;
-		$scope.registroIndicador={};
-		$scope.registroIndicador.mensaje='';
-		$scope.verificador='Inicia. ';
-        $scope.alumnosNivel={};
-        $scope.solicitud=new Array;
-        $scope.info={};
-		$scope.inicializaVar=function(){
-			$scope.indicadores={};
-			$scope.alumnos={};
-            $scope.solicitud=new Array;
-            $scope.alumnosNivel={};
-			$scope.nIndicador={};
-			$scope.registroIndicador={};
-			$scope.registroIndicador.mensaje='';
-			$scope.promedios=new Array;
-		};
-		$scope.selecciona=function(ventana){
-			$scope.ventanaSeleccionada=ventana;
-		};
-		$scope.esSeleccionada=function(ventana){
-			return $scope.ventanaSeleccionada===ventana
-		};
-		$scope.calculoDefinitiva=function(indexAlu){
-			var definitiva=0;
-			for (var i = $scope.promedios.length - 1; i >= 0; i--) {
-				definitiva+=parseFloat($scope.promedios[i].alumnos[indexAlu].promedio)*parseFloat($scope.promedios[i].porcentaje)/100;
-			}
-			return definitiva;
-		};
-		$scope.actPromedio=function(){
-			for (var x = 0; x < $scope.indicadores.length; x++) {
-				$scope.promedios[x]={};
-				$scope.promedios[x].id=$scope.indicadores[x].id;
-				$scope.promedios[x].nombre=$scope.indicadores[x].nombre;
-				$scope.promedios[x].porcentaje=$scope.indicadores[x].porcentaje;
-				$scope.promedios[x].alumnos=[];
-				for (var i = 0; i < $scope.indicadores[x].tipo_nota[0].notas.length; i++) {
-					$scope.promedios[x].alumnos[i]={};
-					$scope.promedios[x].alumnos[i].id=$scope.indicadores[x].tipo_nota[0].notas[i].alumnos.id;
-					$scope.promedios[x].alumnos[i].name=$scope.indicadores[x].tipo_nota[0].notas[i].alumnos.users.name;
-					$scope.promedios[x].alumnos[i].lastname=$scope.indicadores[x].tipo_nota[0].notas[i].alumnos.users.lastname;
-					$scope.promedios[x].alumnos[i].promedio=0;
-					for (var j = $scope.indicadores[x].tipo_nota.length - 1; j >= 0; j--) {
-						$scope.indicadores[x].tipo_nota[j].notas[i].calificacion=parseFloat($scope.indicadores[x].tipo_nota[j].notas[i].calificacion);
-						$scope.promedios[x].alumnos[i].promedio+=$scope.indicadores[x].tipo_nota[j].notas[i].calificacion;
-					}
-					$scope.promedios[x].alumnos[i].promedio=$scope.promedios[x].alumnos[i].promedio/$scope.indicadores[x].tipo_nota.length;
-				}
-			}
-            if(typeof($scope.promedios[0].alumnos)!='undefined'){
-               for (var i = 0; i < $scope.promedios[0].alumnos.length; i++) {
-                   $scope.promedios[0].alumnos[i].definitiva=$scope.calculoDefinitiva(i);
-               } 
-            }else{
-                console.log("No hay alumnos a mostrar.");
-                console.log('$scope.promedios[0].alumnos.length no arroja nada en notas.js Linea 77.');
-            }
-			
-		};
-		$scope.actNota=function($id,$calificacion){
-			$http.post('/registro/notas/materias_asignadas/periodos/indicadores/tipo_nota/notas/'+$id+'/'+$calificacion+'/actualizar').then(
-				function(response){
-					$scope.registroIndicador=response.data;
-					$scope.actPromedio();
-				},
-				function(response){
-					$scope.registroIndicador.status = response.status || 'No hay comunicación con el servidor';
-				}
-			);
-		};
-		$scope.eliminarTipo=function(tipoId){
-			if ($window.confirm("¿Desea eliminar el tipo de nota? Se eliminarán las notas asociadas.")) {
-				$http.get('/registro/notas/materias_asignadas/periodos/indicadores/tipo_nota/'+tipoId+'/delete').then(
-					function(response){
-						$scope.registroIndicador=response.data;
-						$scope.actualizarTodo();
-						$window.alert($scope.registroIndicador.mensaje);
-					},
-					function(response){
-						$scope.registroOtros.mensaje = response.status || 'No hay comunicación con el servidor';
-					}
-				);
-			}
-		};
-		$scope.crearNotaBasica=function(tipoId){
-			$http.post('/registro/notas/materias_asignadas/periodos/indicadores/tipo_nota/notas/'+tipoId+'/basica').then(
-				function(response){
-					$scope.registroIndicador=response.data;
-					$scope.actualizarTodo();
-				},
-				function(response){
-					$scope.registroOtros.mensaje = response.status || 'No hay comunicación con el servidor';
-				}
-			);
-		};
-		$scope.actTipo=function(indicIndex,index){
-			$http.post('/registro/notas/materias_asignadas/periodos/indicadores/tipo_nota/'+$scope.indicadores[indicIndex].tipo_nota[index].id+'/actualizar',$scope.indicadores[indicIndex].tipo_nota[index]).then(
-				function(response){
-					$scope.mensajeTipo=response.data.mensaje;
-				},
-				function(response){
-					$scope.mensajeTipo= response.status || 'No hay comunicación con el servidor';
-				}
-				);
-		};
-		$scope.blanquearMensajeTipo=function(){
-			$scope.mensajeTipo='';
-		};
-		$scope.evaluaTituloTipo=function(titulo){
-			if (titulo!='No definido') {
-				return titulo;
-			}
-			return '';
-		};
-		$scope.crearTipo=function(id){
-			$http.post('/registro/notas/materias_asignadas/periodos/indicadores/tipo_nota/'+id).then(
-				function(response){
-					$scope.registroIndicador=response.data;
-					$scope.actualizarTodo();
-				},
-				function(response){
-					$scope.registroOtros.mensaje = response.status || 'No hay comunicación con el servidor';
-				}
-			);
-		};
-		this.actIndicador=function(index){
-			$http.post('/registro/notas/materias_asignadas/periodos/indicadores/'+$scope.indicadores[index].id+'/actualizar',$scope.indicadores[index]).then(
-				function(response){
-					$scope.registroIndicador=response.data;
-					if ($scope.registroIndicador.estado===true) {
-						$scope.nIndicador={};
-						$scope.actualizarTodo();
-					};
-				},
-				function(response){
-					$scope.registroIndicador.status = response.status || 'No hay comunicación con el servidor';
-				}
-			);
-		};
-		$scope.actualizarTodo=function(){
-			$scope.buscarNotas();
-		};
-		$scope.postBuscarNotas=function(){
-			$scope.indicadores=$scope.notasInPeriodo.data[0].indicadores;
-			$scope.activaNotas=true;
-			$scope.porcentajeMax();
-			for (var i = $scope.indicadores.length - 1; i >= 0; i--) {
-				for (var j = $scope.indicadores[i].tipo_nota.length - 1; j >= 0; j--) {
-					if ($scope.indicadores[i].tipo_nota[j].notas.length<=0) {
-						$scope.crearNotaBasica($scope.indicadores[i].tipo_nota[j].id);
-					};
-				};
-			};
-			$scope.actPromedio();
-		};
-		this.borrarIndicador=function(id){
-			if ($window.confirm('¿Desea eliminar el indicador? Se eliminarán los tipos de nota y las notas asociadas.')) {
-				$http.get('/registro/notas/materias_asignadas/periodos/indicadores/'+id+'/delete').then(
-					function(response){
-						$scope.registroIndicador=response.data;
-						$scope.actualizarTodo();
-						$window.alert($scope.registroIndicador.mensaje);
-					},
-					function(response){
-						$scope.registroOtros.mensaje = response.status || 'No hay comunicación con el servidor';
-					}
-				);
-			}
-		};
-		this.addIndicador=function(){
-			$http.post('/registro/notas/materias_asignadas/periodos/indicadores/'+$scope.periodoSeleccionado,$scope.nIndicador).then(
-				function(response){
-					$scope.registroIndicador=response.data;
-					if ($scope.registroIndicador.estado===true) {
-						$scope.nIndicador={};
-						$scope.actualizarTodo();
-					};
-				},
-				function(response){
-					$scope.registroIndicador.status = response.status || 'No hay comunicación con el servidor';
-				}
-			);
-		};
-		$scope.porcentajeMax=function(){
-			sumador=0;
-			try {
-				for (var i = $scope.indicadores.length - 1; i >= 0; i--) {
-					$scope.indicadores[i].porcentaje=parseFloat($scope.indicadores[i].porcentaje);
-					sumador=sumador+$scope.indicadores[i].porcentaje;
-				}
-			}catch(err){
-				$scope.porcentajeMaximo=100;
-			}
-			if (sumador>0) {
-				if (sumador<100) {
-					$scope.porcentajeMaximo=100-sumador;
-				}else{
-					$scope.porcentajeMaximo=0;
-				}
-			}else{
-				$scope.porcentajeMaximo=100;
-			}
-		};
-		this.buscarPeriodos=function(){
-			$scope.nivelesInPeriodos={};
-			$scope.inicializaVar();
-			$http.get('/registro/notas/materias_asignadas/periodos/'+$scope.materiaSeleccionada).then(
-				function(response){
-					$scope.nivelesInPeriodos.data=response.data;
-					$scope.nivelesInPeriodos.status=response.status;
-					$scope.activaPeriodos=true;
-					$scope.activaNotas=false;
-				},function(response){
-					$scope.nivelesInPeriodos.status=response.status;
-				}
-			);
-		};
-		$scope.buscarNotas=function(){
-			$scope.inicializaVar();
-			$scope.cargandoNotas=true;
-			$scope.cargando=true;
-			$http.get('/registro/notas/materias_asignadas/periodos/notas/'+$scope.periodoSeleccionado).then(
-				function(response){
-					$scope.notasInPeriodo.data=response.data;
-					$scope.notasInPeriodo.status=response.status;
-					$scope.buscarAlumnosNotas();
-					$scope.cargandoNotas=false;
-				},function(response){
-					$scope.notasInPeriodo.status=response.status;
-					$scope.cargandoNotas=false;
-				}
-			);
-		};
-		$scope.buscarAlumnosNotas=function(){
-            $scope.cargando=false;
-            $scope.alumnosNivel={};
-            $scope.postBuscarNotas();
-		};
-        $scope.actNuevosUsuarios=function(length){
-            if(length<0){
-                return 1;
-            }
-            $http.post('/materias_asignadas/periodos/alumnos/rellenar',$scope.solicitud[length]).then(
-            function(response){
-                return $scope.actNuevosUsuarios(length-1)+1;
-            });
+    angular
+        .module('notas',[])
+        .config(function($interpolateProvider){$interpolateProvider.startSymbol('//').endSymbol('//');})
+        .directive('notasDir',notasDir);
+    
+    function notasDir(){
+        var directive={
+            restrict: 'EA',
+			templateUrl: '../../public/templates/notas.html',
+            controller:controller,
+            controllerAs:'vm',
         };
-        $scope.hayAlumno=function(id){
-            for (var i=0; i<$scope.promedios[0].alumnos.length; i++){
-                if(id==$scope.promedios[0].alumnos[i].id){
-                   return true;
+        return directive;
+        
+        function controller($http,$window){
+            
+            var vm=this;
+            
+            vm.porcentajeMaximo=100;    // Maximo porcentaje de indicador
+            vm.ventanaSeleccionada=0;   // Ventana seleccionada para mostrar notas.
+            vm.elegido={                // Que se ha elegido
+                nivel:0,
+                materia:0,
+                periodo:0,
+                indicador:0,
+            };
+            vm.cargando={               // Estado de carga de la aplicación
+                indicadores:false,
+                notas:false,
+            };
+            vm.info={};                 // Muestra la información de respuesta de la API
+            vm.niveles={};              // Recoje los niveles del usuario
+            vm.materias={};             // Recoge las materias habilitadas por el usuario
+            vm.periodos={};             // Recoge los periodos según la materia elegida
+            vm.indicadores={};          // Recoge los indicadores
+            vm.notasRaw={};             // Recoge a los alumnos y a las notas de la API
+            vm.nuevoIndic={};           // Almacena el nuevo indicador 
+            vm.promedios={};            // Almacena los totalizados de los periodos.
+            vm.mensajeTipo='';          // Tiene las respuestas de las actualizaciones de tipos de notas, en el modal
+            
+            // Funciones
+            vm.inicializador=inicializador;                     // Inicializa las variables;
+            vm.buscarNiveles=buscarNiveles;                     // Busca los niveles
+            vm.buscarMaterias=buscarMaterias;                   // Busca las materias del nivel
+            vm.buscarPeriodos=buscarPeriodos;                   // Busca periodos relacionados con materias
+            vm.buscarIndicadores=buscarIndicadores;             // Busca los indicadores del periodo elegido
+            vm.actIndicador=actIndicador;                       // Actualiza el indicador según el $index.
+            vm.borrarIndicador=borrarIndicador;                 // Borra el indicador según el ID
+            vm.addIndicador=addIndicador;                       // Añade indicador.
+            vm.actTipo=actTipo;                                 // Actualiza los tipos de notas
+            vm.crearTipo=crearTipo;                             // Crea los tipos de notas para un indicador.
+            vm.eliminarTipo=eliminarTipo;                       // Elimina un tipo de nota
+            vm.actNota=actNota;                                 // actualiza una nota.
+            
+            // Funciones para control de ventanas
+            vm.esSeleccionada=esSeleccionada;   // Verifica que una ventana es seleccionada
+            vm.selecciona=selecciona;           // Selecciona una ventana a mostrar.
+            
+            // Lanzamientos automáticos
+            vm.buscarNiveles(); // Lanzar la búsqueda de niveles.
+            
+            /////////////////////////////////////////////////
+            
+            //Funcion que inicializa las variables. Los mismos textos de variables del controlador en general.
+            function inicializador(){
+                //Pendiente si se necesita
+                return true;
+            }
+            
+            //Funcion que recibe los niveles autorizados
+            function buscarNiveles(){
+                vm.niveles={};
+                $http.get('/registro/notas/niveles_asignados').then(function(res){
+                    vm.niveles=res.data;
+                });
+            }
+            
+            // Funcion que recoge las materias en niveles
+            function buscarMaterias(){
+                vm.materias={};
+                vm.elegido.materia=0;
+                vm.elegido.periodo=0;
+                console.log('Nivel elegido: '+vm.elegido.nivel);
+                $http.get('/registro/notas/materias_asignadas/'+vm.elegido.nivel).then(
+				    function(res){
+                        vm.materias=res.data;
+                    });
+            }
+            
+            // Funcion que recoge los periodos de las materias
+            function buscarPeriodos(){
+                vm.elegido.periodo=0;
+                vm.periodos={};
+                console.log('Materia elegida: '+vm.elegido.materia);
+                $http.get('/registro/notas/periodos_asignados/'+vm.elegido.materia).then(
+				function(data){
+					vm.periodos=data.data;
+				});
+            }
+            
+            /*Aqui se acaba las funciones iniciales de carga y empiezan las funciones de indicadores*/
+            
+            // Funcion que recoge los indicadores, tipos de nota, notas y alumnos
+            function buscarIndicadores(){
+                vm.indicadores={};
+                vm.cargando.indicadores=true;
+                $http.get('/registro/notas/indicadores/'+vm.elegido.periodo).then(
+				    function(response){
+				        vm.indicadores=response.data;
+                        // Calculamos el promedio de tipos de nota en cada alumno
+                        for(var i=0; i<vm.indicadores.length; i++){
+                            for(var j=0; j<vm.indicadores[i].alumnos.length; j++){
+                                var defin =0;
+                                for(var k=0; k<vm.indicadores[i].alumnos[j].tipo_nota.length; k++){
+                                    var tempo=parseFloat(vm.indicadores[i].alumnos[j].tipo_nota[k].cal);
+                                    vm.indicadores[i].alumnos[j].tipo_nota[k].cal=tempo;
+                                    defin+=parseFloat(vm.indicadores[i].alumnos[j].tipo_nota[k].cal)
+                                }
+                                defin=defin/vm.indicadores[i].alumnos[j].tipo_nota.length;
+                                vm.indicadores[i].alumnos[j].prom=defin;
+                            }
+                        }
+                        vm.cargando.indicadores=false;
+                        console.log('Indicadores: Abajo');
+                        console.log(vm.indicadores);
+                        porcentajeMax();
+                        actPromedio();
+                        console.log('Promedios: Abajo');
+                        console.log(vm.promedios);
+				});
+            }
+            
+            // Calcula el promedio restante de indicador nuevo
+            function porcentajeMax(){
+                var sumador=0;
+                try {
+				    for (var i = vm.indicadores.length - 1; i >= 0; i--) {
+					   vm.indicadores[i].porcentaje=parseFloat(vm.indicadores[i].porcentaje);
+					   sumador=sumador+vm.indicadores[i].porcentaje;
+				    }
+                }
+                catch(err){
+                    vm.porcentajeMaximo=100;
+                }
+                if (sumador>0) {
+				    if (sumador<100) {
+					   vm.porcentajeMaximo=100-sumador;
+				    }else{
+					   vm.porcentajeMaximo=0;
+				    }
+                }else{
+				    vm.porcentajeMaximo=100;
                 }
             }
-            return false;
-        };
-		this.buscarMateriasAsignadas=function(){
-			$http.get('/registro/notas/materias_asignadas').then(
+
+            // Actualizar indicador
+            function actIndicador(index){	
+                vm.info={};
+                $http.post('/registro/notas/materias_asignadas/periodos/indicadores/'+vm.indicadores[index].id+'/actualizar',vm.indicadores[index]).then(
 				function(response){
-					$scope.materiasInNiveles.data=response.data;
-					$scope.materiasInNiveles.status=response.status;
-				},function(response){
-					$scope.materiasInNiveles.status=response.status;
+					vm.info=response.data;
+					if (vm.info.estado===true) {
+                        vm.buscarIndicadores();
+					};
 				}
-			);
-		};
-		this.buscarMateriasAsignadas();
-	});
+                );
+            }
+            
+            // Eliminar indicador
+            function borrarIndicador(id){
+                vm.info={};
+                vm.cargando.indicadores=true;
+                if ($window.confirm('¿Desea eliminar el indicador? Se eliminarán los tipos de nota y las notas asociadas.')) {
+				    $http.get('/registro/notas/materias_asignadas/periodos/indicadores/'+id+'/delete').then(
+					   function(response){
+                           vm.info=response.data;                           
+                           $window.alert(vm.info.mensaje);
+                           vm.buscarIndicadores();
+                       });
+                }
+            }
+            
+            // Añadir un indicador
+            function addIndicador(){
+                vm.info={};
+                $http.post('/registro/notas/materias_asignadas/periodos/indicadores/'+vm.elegido.periodo,vm.nuevoIndic).then(
+                    function(response){
+                        vm.info=response.data;
+                        if (vm.info.estado===true) {
+                            vm.nuevoIndic={};
+                            vm.buscarIndicadores();
+					};
+				});
+            }
+            
+            // Actualiza la tabla de promedios
+            function actPromedio(){
+                vm.promedios={};
+                vm.promedios.indicadores=new Array;
+                // Se asignan los indicadores disponibles al promedio
+                for (var x = 0; x < vm.indicadores.length; x++) {
+                    vm.promedios.indicadores[x]={};
+                    vm.promedios.indicadores[x].id=vm.indicadores[x].id;
+                    vm.promedios.indicadores[x].nombre=vm.indicadores[x].nombre;
+                    vm.promedios.indicadores[x].porcentaje=vm.indicadores[x].porcentaje;
+                }
+                vm.promedios.alumnos=new Array;
+                // Se agregan los alumnos disponibles al promedio
+                for (var x=0; x<vm.indicadores[0].alumnos.length; x++){
+                    vm.promedios.alumnos[x]={};
+                    vm.promedios.alumnos[x].id=vm.indicadores[0].alumnos[x].id;
+                    vm.promedios.alumnos[x].users_id=vm.indicadores[0].alumnos[x].users_id;
+                    vm.promedios.alumnos[x].name=vm.indicadores[0].alumnos[x].name;
+                    vm.promedios.alumnos[x].lastname=vm.indicadores[0].alumnos[x].lastname;
+                    vm.promedios.alumnos[x].indicadores=vm.promedios.indicadores; // Asignar los indicadores existentes en promedio a cada alumno.
+                    vm.promedios.alumnos[x].def=0;
+                }
+                // Calculando las definitivas de cada indicador por alumno e indicador.
+                
+                for(var i=0; i<vm.promedios.alumnos.length; i++){ // Avanzamos en todos los alumnos del promedio
+                    for (var j=0; j<vm.promedios.alumnos[i].indicadores.length; j++){ // Avanzamos en todos los indicadores
+                        // Se supone que son los mismos indicadores. Por eso se usa el mísmo índex
+                        for(var k=0; k<vm.indicadores[j].alumnos.length; k++){ // Miramos en el indicador de vm.indicadores, para buscar alumno
+                            // Buscamos el alumno y sus notas
+                            if(vm.promedios.alumnos[i].id===vm.indicadores[j].alumnos[k].id){ // Si son iguales entramos.
+                                var tempDef=0;
+                                //console.log('Divisor '+vm.indicadores[j].alumnos[k].tipo_nota.length);
+                                for(var l=0;l<vm.indicadores[j].alumnos[k].tipo_nota.length; l++){
+                                    // Se hace la sumatoria de las calificaciones
+                                    console.log('Paso de tempDef: '+tempDef);
+                                    tempDef+=parseFloat(vm.indicadores[j].alumnos[k].tipo_nota[l].cal);
+                                    
+                                }
+                                // Se divide por el número de notas
+                                console.log('Pre-final de tempDef: '+tempDef);
+                                console.log('Def: '+vm.indicadores[j].alumnos[k].prom);
+                                tempDef=tempDef/vm.indicadores[j].alumnos[k].tipo_nota.length;
+                                console.log('Final de tempDef: '+tempDef);
+                                vm.promedios.alumnos[i].indicadores[j].def=tempDef;
+                                
+                                
+                            }
+                        }
+                    }
+                }
+                // Cálculo de definitivas del periodo
+                for(var i=0; i<vm.promedios.alumnos.length; i++){
+                    for(var j=0; j<vm.promedios.alumnos[i].indicadores.length; j++){
+                        var def = parseFloat(vm.promedios.alumnos[i].indicadores[j].porcentaje) * parseFloat(vm.promedios.alumnos[i].indicadores[j].def)/100;
+                        vm.promedios.alumnos[i].def+=def;
+                    }
+                }
+			}
+            
+            /* Fin de funciones sobre indicadores, siguen cálculo de notas */
+            
+            // Crear tipo de nota por indicador
+            function crearTipo(indId){
+                console.log('Pase por aqui');
+                vm.cargando.indicadores=true;
+                $http.post('/registro/notas/materias_asignadas/periodos/indicadores/tipo_nota/'+indId).then(function(res){
+                    $window.alert(res.data.mensaje);
+                    vm.buscarIndicadores();
+                });
+            }
+            
+            //Actualizar los tipos de notas
+            function actTipo(indIndex,tipoIndex){
+                $http.post('/registro/notas/materias_asignadas/periodos/indicadores/tipo_nota/' + vm.indicadores[indIndex].tipo_nota[tipoIndex].id+ '/actualizar', vm.indicadores[indIndex].tipo_nota[tipoIndex])
+                    .then(function(res){
+                    vm.mensajeTipo=res.data.mensaje;
+                });
+            }
+            
+            // Elimina un tipo de nota por Id.
+            function eliminarTipo(tipoId){
+                if($window.confirm('¿Desea eliminar el tipo de nota? Se eliminarán las notas asociadas.')){
+                    vm.cargando.indicadores=true;
+                    $http.get('/registro/notas/materias_asignadas/periodos/indicadores/tipo_nota/'+ tipoId+ '/delete').then(function(res){
+                        $window.alert(res.data.mensaje);
+                        vm.buscarIndicadores();
+                    });
+                }
+            }
+            
+            // Actualiza una nota
+            function actNota(notaId,cal){
+                $http.post('/registro/notas/materias_asignadas/periodos/indicadores/tipo_nota/notas/'+ notaId+ '/'+ cal+'/actualizar')
+                    .then(function(res){
+                    actPromedio();
+                });
+            }
+            
+            /****** Control de ventanas *******/
+            
+            // Verifica la seleccion de ventana
+            function esSeleccionada(ventana){
+                return vm.ventanaSeleccionada===ventana
+            }
+            
+            // Selecciona ventana
+            function selecciona(id){
+                vm.ventanaSeleccionada=id;
+            }
+        }
+    }
 })();

@@ -3,6 +3,7 @@
 namespace app\Helpers;
 
 use App\Helpers\Contracts\NoOrphanRegistersContract;
+use Log;
 
 //Carga de modelos
 
@@ -28,6 +29,116 @@ use App\modelos\Users;
 
 class NoOrphanRegisters implements NoOrphanRegistersContract
 {
+
+    //Rellena las notas de todos los alumnos nuevos
+    // En Desuso por la demora del proceso.
+    public function autoLlenarAlumnos(){
+    	//Primero, buscar los 500 alumnos nuevos de cada nivel
+    	$alumnos=Alumnos::orderBy('created_at','desc')->take(500)->get();
+    	// Los comparamos con los indicadores y tipos de nota existentes de cada uno de sus niveles
+    	// Creamos una colección para los resultados
+    	$col=collect([]);
+    	foreach ($alumnos as $alumno) {
+    		// Buscamos el nivel de cada alumno y sus notas
+    		$notasNivel=Niveles::where('id',$alumno->niveles_id)
+    			->with('materias_has_niveles.niveles_has_periodos.indicadores.tipo_nota.notas')
+    			->first();
+    		foreach ($notasNivel->materias_has_niveles as $materia) {
+    			// en cada materia
+    			foreach ($materia->niveles_has_periodos as $periodo) {
+    				// En cada periodo
+    				foreach ($periodo->indicadores as $indicador) {
+    					// En cada indicador
+    					foreach ($indicador->tipo_nota as $tipo) {
+    						// En cada tipo
+    						$encontrado=false;
+    						foreach ($tipo->notas as $nota) {
+    							// En cada nota, si lo encuentra, pone $encontrado a true, de lo contrario false
+    							$encontrado=$nota->alumnos_id==$alumno->id?true:false;
+    						}
+    						// Si no se encontró al alumno, se crea una nota vacía.
+    						if(!$encontrado){
+    							$obj=new Notas;
+            					$obj->tipo_nota_id=$tipo->id;
+            					$obj->nombre_nota='ND';
+            					$obj->descripcion='';
+            					$obj->calificacion=0;
+            					$obj->alumnos_id=$alumno->id;
+            					$obj->save();
+            					Log::info('Creada nota de alumno ID:'+$alumno->id+'Con el tipo de nota ID:'+$tipo->id);
+            					$col->push([
+            						'alumno_id'=>$alumno->id,
+            						'materia_id'=>$materia->id,
+            						'periodo_id'=>$periodo->id,
+            						'indicador_id'=>$indicador->id,
+            						'tipo_nota_id'=>$tipo->id
+            						]);
+    						}
+    					}
+    				}
+    			}
+    		}
+    	}
+    	return $col->toJson();	
+    }
+
+    //Rellena las notas de un alumno despues de crearlo
+    public function autoLlenarAlumno($id){
+    	$alumno=Alumnos::find($id);
+    	$notasNivel=Niveles::where('id',$alumno->niveles_id)
+    		->with(['materias_has_niveles'=>function($query){
+    			$query->with(['materias','niveles_has_periodos'=>function($query){
+    				$query->with(['periodos','indicadores.tipo_nota.notas']);
+    			}]);
+    		}])
+    		->first();
+    	$resultado=[];
+    	foreach ($notasNivel->materias_has_niveles as $materia) {
+    		// en cada materia
+    		foreach ($materia->niveles_has_periodos as $periodo) {
+    			// En cada periodo
+    			foreach ($periodo->indicadores as $indicador) {
+    				// En cada indicador
+    				foreach ($indicador->tipo_nota as $tipo) {
+    					// En cada tipo
+    					$encontrado=false;
+    					foreach ($tipo->notas as $nota) {
+    						// En cada nota, si lo encuentra, pone $encontrado a true, de lo contrario false
+    						if($nota->alumnos_id==$alumno->id){
+    							$encontrado=true;
+    							break;
+    						}
+    					}
+    					// Si no se encontró al alumno, se crea una nota vacía.
+    					if(!$encontrado){
+    						$obj=new Notas;
+           					$obj->tipo_nota_id=$tipo->id;
+           					$obj->nombre_nota='ND';
+           					$obj->descripcion='';
+           					$obj->calificacion=0;
+           					$obj->alumnos_id=$alumno->id;
+           					$obj->save();
+           					Log::info('Creada nota de alumno ID:'+$alumno->id+'Con el tipo de nota ID:'+$tipo->id);
+           					$resultado[]=[
+           						'materia_id'=>$materia->id,
+           						'materia_name'=>$materia->materias->nombre_materia,
+           						'periodo_id'=>$periodo->id,
+           						'periodo_name'=>$periodo->periodos->nombre_periodo,
+           						'indicador_id'=>$indicador->id,
+           						'indicador_name'=>$indicador->nombre,
+           						'tipo_nota_id'=>$tipo->id,
+           						'tipo_nota_name'=>$tipo->nombre,
+           						'alumnos_id'=>$alumno->id
+           						];	
+    					}
+       				}
+    			}
+    		}
+    	}
+    	// Devuelve una colección con al menos el mensaje de estado.
+    	$col=collect([$resultado]);
+    	return $col->toJson();
+    }
 
     public function getLimpiarHuerfanos(){
 		$resultados='Resultados de limpieza de huerfanos: ';

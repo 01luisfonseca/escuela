@@ -49,5 +49,17 @@ class MantenimientoController extends Controller
 		$obj=Notas::select('id')->where('id','>','0')->orderBy('id','desc')->first();
 		return $obj->id;
 	}
+	public function autoLlenarNotas($id){
+		$noOrphan= new NoOrphanRegisters;
+		return $noOrphan->autoLlenarAlumno($id);
+	}
+
+	public function usuariosRecientes($rango=200){
+		$alumnos=Alumnos::orderBy('created_at','desc')
+			->with(['users'=> function($query){
+				$query->select('id','name','lastname');
+			}])->select('id','users_id')->take($rango)->get();
+		return $alumnos->toJson();
+	}
 	
 }

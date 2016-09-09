@@ -38,7 +38,7 @@
 							@if(isset($materiaInNivelConProfe) and $materiaInNivelConProfe)
 							@if($materiaInNivelConProfe->count()>0)
 							@foreach($materiaInNivelConProfe as $campo)
-    							<li class="list-group-item">@if(is_object($campo->niveles))<em>{{$campo->niveles->nombre_nivel}}, {{$campo->materias->nombre_materia}}</em>. {{$campo->empleados->users->name}} {{$campo->empleados->users->name}}. @endif<form method="POST" action="{{ route('editar_profesor')}}">
+    							<li class="list-group-item">@if(is_object($campo->niveles))<em>{{$campo->niveles->nombre_nivel}}, {{$campo->materias->nombre_materia}}</em>. {{$campo->empleados->users->name}} {{$campo->empleados->users->lastname}}. @endif<form method="POST" action="{{ route('editar_profesor')}}">
                                 {!! csrf_field() !!}
                                 <input type="hidden" name="id" value="{{$campo->id}}">
                                 <input type="hidden" name="accion" value="1">

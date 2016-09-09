@@ -1,12 +1,14 @@
-<div ng-controller='mttoCtrl as mtto'>
-	<p>Total de registros en notas: {{registroNotas}}</p>
-	<p><a href="" class='btn btn-warning' ng-click="eliminarNotasHuerfanas()">Iniciar limpieza</a></p>
+<div class='panel panel-default' ng-controller='mttoCtrl as mtto'>
+	<div class="panel-heading"><h3><em>Limpieza de notas</em></h3></div>
+    <div class="panel-body">
+    <p>Total de registros en notas: {{registroNotas}}</p>
+	<p><a href="" class='btn btn-warning' ng-click="eliminarNotasHuerfanas()">Iniciar limpieza de Notas.</a></p>
 	<div class="progress" ng-hide='procesoFinal'>
   	<div class="progress-bar" role="progressbar" aria-valuenow="// estadoRevision //" aria-valuemin="0" aria-valuemax="// registroNotas //" style="width: // estadoRevision*100/registroNotas //%;">
     	<span class="sr-only">// estadoRevision*100/registroNotas //% Complete</span>
   	</div>
-</div>
-<div ng-show='true'  class='desplazable'>
+    </div>
+    <div ng-show='true'  class='desplazable'>
       <table class="table">
       <thead>
         <tr>
@@ -25,5 +27,43 @@
         </tr>
       </tbody>
     </table>
+    </div>
+    </div>
 </div>
+<div class="panel panel-default" ng-controller='mttoAlumNuevo as vm'>
+    <div class="panel-heading"><h3><em>Creación de notas para alumnos nuevos</em></h3></div>
+    <div class="panel-body">
+        <p>Se buscarán los últimos alumnos, según el rango, y se evaluará si son nuevos. Posteriormente se crearán las notas según su estado, y según su nivel de estudios. Las notas nuevas serán 0. Posteriormente el profesor podrá modificar las notas en el módulo correspondiente.</p>
+        <p><em>Rango de alumnos.</em><input type="number" max="700" ng-model='vm.rango'><a href="" class='btn btn-warning' ng-click="vm.buscarAlumnos()">Iniciar llenado de Notas de alumnos nuevos.</a></p>
+	<div class="progress" ng-hide='vm.procesoAcabado'>
+  	<div class="progress-bar" role="progressbar" aria-valuenow="// vm.pasos //" aria-valuemin="0" aria-valuemax="// vm.ciclos //" style="width: // vm.pasos*100/vm.ciclos //%;">
+    	<span class="sr-only">// vm.pasos*100/vm.ciclos //% Complete</span>
+  	</div>
+    </div>
+    <div ng-show='vm.procesoAcabado || vm.alumnos.data.length>0'  class='desplazable'>
+      <table class="table">
+      <thead>
+        <tr>
+          <th>Alumno</th>
+          <th>Información afectada</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-repeat='alumno in vm.alumnos.data'>
+          <td>// alumno.users.name // // alumno.users.lastname //</td>
+          <td><table class="table">
+              <tr ng-repeat='rev in alumno.revision[0][0]'>
+                  <td>// rev.materia_name //</td>
+                  <td>// rev.periodo_name //</td>
+                  <td>// rev.indicador_name //, ID:// rev.indicador_id //</td>
+                  <td>// rev.tipo_nota_name //, ID: // rev.tipo_nota_id //</td>
+              </tr>
+              </table>
+            </td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+        
+    </div>
 </div>

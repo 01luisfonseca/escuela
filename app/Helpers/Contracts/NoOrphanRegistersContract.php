@@ -6,6 +6,9 @@ Interface NoOrphanRegistersContract
 {
 
     public function getLimpiarHuerfanos();
+    public function getLimpiarHuerfanosLiviano();
+    public function autoLlenarAlumnos();
+    public function autoLlenarAlumno($id);
     public function eliminarMateriasHasNivelesHuerfanos();
     public function eliminarPeriodosHasNivelesHuerfanos();
     public function eliminarAsistenciasHuerfanos();

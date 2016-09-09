@@ -54,4 +54,65 @@
 		};
 		$scope.cargarRegistroNotas();
 	});
+    
+    
+    app.controller('mttoAlumNuevo',function($http){
+        var vm=this;
+        
+        /*** Variables y objetos ***/
+        vm.alumnos={};
+        vm.ciclos=0;
+        vm.pasos=0;
+        vm.procesoAcabado=true;
+        vm.rango=200;
+        
+        /*** Funciones del controlador ***/
+        vm.buscarAlumnos=buscarAlumnos;
+        
+        /*** Acciones automáticas  al cargar ***/
+        //Ninguna
+        
+        /*** Declaración de funciones ***/
+        
+        /* Busca alumnos y los asigna a vm.alumnos, despues carga revisar notas */
+        function buscarAlumnos(){
+            vm.procesoAcabado=false;
+            vm.alumnos={};
+            vm.ciclos=0;
+            vm.pasos=0;
+            $http.get('/mantenimiento/alumnos/'+vm.rango).then(function(res){
+                vm.alumnos=res;
+                vm.ciclos=vm.alumnos.data.length;
+                console.log('Ciclos asignados: '+vm.ciclos);
+                console.log('Alumnos:');
+                console.log(vm.alumnos);
+                if(vm.ciclos>0){
+                    revisarNotas();
+                }
+            });
+        }
+        
+        /* Envía el alumno a creación de notas. */
+        function revisarNotas(){
+            if(!vm.alumnos.data[vm.pasos]){//Cierra en caso de que se acceda a un index que no existe
+                console.log('Proceso de alumnos finalizado');
+                console.log(vm.alumnos);
+                vm.procesoAcabado=true;
+                return true;
+            }
+            vm.alumnos.data[vm.pasos].revision=[];
+            $http.get('/mantenimiento/autonotas/'+vm.alumnos.data[vm.pasos].id).then(function(res){
+                console.log('Paso:'+vm.pasos);
+                vm.alumnos.data[vm.pasos].revision.push(res.data);
+                if(vm.pasos>vm.ciclos){
+                    console.log('Proceso de alumnos finalizado');
+                    console.log(vm.alumnos.data);
+                    vm.procesoAcabado=true;
+                }else{
+                    vm.pasos++;
+                    revisarNotas();
+                }
+            });
+        }
+    });
 })();

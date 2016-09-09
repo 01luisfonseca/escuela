@@ -126,10 +126,12 @@ Route::group(['middleware'=>'auth'], function(){
 
 			Route::group(['prefix'=>'/notas'], function(){
 				Route::get('/crear',['as'=>'crear_rendimientorest','uses'=>'NotasController@index']);
+				Route::get('/materias_asignadas/{nivelId}','NotasController@getMateriasAuth');
 				Route::get('/materias_asignadas/periodos/{id}','NotasController@getNivelesHasPeriodos');
 				Route::get('/materias_asignadas/periodos/alumnos/{idNiveles}','NotasController@getAlumnosEnNivel');
 				Route::get('/materias_asignadas','NotasController@getMateriasHasNiveles');
-                Route::get('/materias_asignadas/periodos/indicadores/{nivPerid}','NotasController@getOnlyIndicadores');				Route::get('/materias_asignadas/periodos/notas/{id}','NotasController@getIndicadores');
+                Route::get('/materias_asignadas/periodos/indicadores/{nivPerid}','NotasController@getOnlyIndicadores');
+                Route::get('/materias_asignadas/periodos/notas/{id}','NotasController@getIndicadores');
 				Route::get('/materias_asignadas/periodos/indicadores/{id}/delete','NotasController@borrarIndicador');
 				Route::get('/materias_asignadas/periodos/indicadores/tipo_nota/{id}/delete','NotasController@delTipoNotas');
                 Route::post('/materias_asignadas/periodos/alumnos/rellenar','NotasController@rellenarAlumnosNuevosNivel');
@@ -140,6 +142,9 @@ Route::group(['middleware'=>'auth'], function(){
 				Route::post('/materias_asignadas/periodos/indicadores/tipo_nota/notas/{tipoNotaId}','NotasController@setNotas');
 				Route::post('/materias_asignadas/periodos/indicadores/tipo_nota/notas/{id}/{cal}/actualizar','NotasController@actNotas');
 				Route::post('/materias_asignadas/periodos/indicadores/tipo_nota/notas/{tipoNotaId}/basica','NotasController@setNotaBasica');
+				Route::get('/niveles_asignados','NotasController@getNivelesAuth');
+				Route::get('/periodos_asignados/{matId}','NotasController@getPeriodosPorMateria');
+				Route::get('/indicadores/{periodoId}','NotasController@getNewIndicadores');
 
 			});
 
@@ -295,6 +300,8 @@ Route::group(['middleware'=>'auth'], function(){
 
 	Route::group(['prefix'=>'mantenimiento','namespace'=>'mantenimiento'],function(){
 		Route::get('/manual','MantenimientoController@getLimpiarHuerfanosTotal');
+		Route::get('/autonotas/{id}','MantenimientoController@autoLlenarNotas');
+		Route::get('/alumnos/{rango}','MantenimientoController@usuariosRecientes');
 		Route::get('/general',function(){
 			return view('mantenimientocompuesto');
 		});

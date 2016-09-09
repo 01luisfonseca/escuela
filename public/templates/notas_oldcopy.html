@@ -1,51 +1,54 @@
-<div>
+<div ng-controller='notasCtrl as notas'>
 	<div class='row'>
 		<div class="form-group">
 			<label class="col-sm-2 control-label">Elija una materia en el nivel.</label>
 			<div class="col-sm-8">
-				<select ng-model='vm.elegido.materia' ng-change='vm.buscarPeriodos()' class='form-control'>
-					<option ng-repeat='materia in vm.nivelesHasMaterias' value='//materia.id//'><h3><em>Nivel: </em>// materia.niveles.nombre_nivel //.</h3> <h4><em>Materia: </em>//materia.materias.nombre_materia//</h4></option>
+				<select ng-model='materiaSeleccionada' ng-change='notas.buscarPeriodos()' class='form-control'>
+					<option ng-repeat='materia in materiasInNiveles.data' value='//materia.id//'>Nivel: // materia.niveles.nombre_nivel //, Materia: //materia.materias.nombre_materia//</option>
 				</select>
 			</div>
 		</div>
 	</div>
-	<div class='row' ng-show='vm.elegido.materia != 0'>
+	<div class='row' ng-show='activaPeriodos'>
 		<div class="form-group">
 			<label class="col-sm-2 control-label">Elija un periodo de la materia.</label>
 			<div class="col-sm-8">
-				<select ng-model='vm.elegido.periodo' ng-change='vm.buscarIndicadores()' class='form-control'>
-					<option ng-repeat='periodo in vm.periodosPorMateria' value='//periodo.id//'>// periodo.periodos.nombre_periodo //</option>
+				<select ng-model='periodoSeleccionado' ng-change='buscarNotas()' class='form-control'>
+					<option ng-repeat='periodo in nivelesInPeriodos.data' value='//periodo.id//'>// periodo.periodos.nombre_periodo //</option>
 				</select>
 			</div>
 		</div>
 	</div>
-	<div class='container-fluid' ng-show='vm.cargando.indicadores || vm.cargando.notas'><p><h5><em>Cargando información del periodo, por favor espere...</em></h5></p></div>
-	<div class='container-fluid' ng-show='vm.elegido.periodo != 0 && !vm.cargando.indicadores'>
+	<div class='container-fluid' ng-show='cargandoNotas'><p><h5><em>Cargando información del periodo, por favor espere...</em></h5></p></div>
+	<div class='container-fluid' ng-show='activaNotas'>
 		<div class='row'>
 			<div class='col-xs-4 col-md-offset-4'>
 			<table class="table table-bordered">
 				<tr>
 					<th>Curso</th>
-					<td>// vm.indicadores[0].materias_has_niveles.niveles.nombre_nivel //</td>
+					<td>// notasInPeriodo.data[0].materias_has_niveles.niveles.nombre_nivel //</td>
 				</tr>
 				<tr>
 					<th>Materia</th>
-					<td>// vm.indicadores[0].materias_has_niveles.materias.nombre_materia //</td>
+					<td>// notasInPeriodo.data[0].materias_has_niveles.materias.nombre_materia //</td>
 				</tr>
 				<tr>
 					<th>Periodo</th>
-					<td>// vm.indicadores[0].periodos.nombre_periodo //</td>
+					<td>// notasInPeriodo.data[0].periodos.nombre_periodo //</td>
 				</tr>
 			</table>
 			</div>
 		</div>
-		<div class='row' ng-hide='vm.cargando.indicadores'>
+		<div class="row" ng-show='cargando'>
+			<h5><em>Cargando notas...</em></h5>
+		</div>
+		<div class='row' ng-hide='cargando'>
 			<div class='col-md-5 col-xs-6 col-md-offset-1'>
 				<div class='panel panel-default desplazable-grande'>
 					<div class="panel-heading">Indicadores existentes</div>
 					<div class='panel-body'>
-						<div ng-repeat='indicador in vm.indicadores'>
-						<form class="form-horizontal" name="formActInd" ng-submit="formActInd.$valid && vm.actIndicador($index)" novalidate>
+						<div ng-repeat='indicador in indicadores'>
+						<form class="form-horizontal" name="formActInd" ng-submit="formActInd.$valid && notas.actIndicador($index)" novalidate>
 							<fieldset>
 								<legend>Indicador // $index+1 //</legend>
 								<div class="row">
@@ -73,9 +76,9 @@
         									</div>
     									</div>
   									</div>
-  									<button ng-click="vm.borrarIndicador(indicador.id)"  class="btn btn-danger"> Borrar?</button>
+  									<button ng-click="notas.borrarIndicador(indicador.id)"  class="btn btn-danger"> Borrar?</button>
   									<input type="submit" class="btn btn-warning" value="Actualizar" ng-show='indicador.visible'>
-  									<button class="btn btn-primary" ng-click='indicador.visible=false' ng-show='indicador.visible'>Cancelar cambios</button>
+  									<button class="btn btn-primary" ng-click='actualizarTodo()' ng-show='indicador.visible'>Cancelar cambios</button>
   								</div>
   							</fieldset>
 						</form>
@@ -87,18 +90,18 @@
 				<div class='panel panel-default'>
 					<div class="panel-heading">Crear indicador</div>
 					<div class='panel-body'>
-						<form class="form-horizontal" name="formIndic" ng-submit="formIndic.$valid && vm.addIndicador()" novalidate>
+						<form class="form-horizontal" name="formIndic" ng-submit="formIndic.$valid && notas.addIndicador()" novalidate>
 							<div class="row">
 								<div class='col-xs-5'>
 									<div class="form-group">									
     									<label class="control-label">Nombre</label>
-    									<input type="text" class="form-control" ng-model="vm.nuevoIndic.nombre" required>
+    									<input type="text" class="form-control" ng-model="nIndicador.nombre" required>
     								</div>
   								</div>
   									<div class='col-xs-5 col-xs-offset-2'>
   										<div class="form-group">										
-    										<label class="control-label">Porcentaje (Max. //vm.porcentajeMaximo//)</label>
-    										<input type="number" class="form-control" min="0" max="// vm.porcentajeMaximo //" step="0,1" ng-model="vm.nuevoIndic.porcentaje" required>
+    										<label class="control-label">Porcentaje (Max. //porcentajeMaximo//)</label>
+    										<input type="number" class="form-control" min="0" max="// porcentajeMaximo //" step="0,1" ng-model="nIndicador.porcentaje" required>
     										<div class="input-group-addon">%</div>
     									</div>
   									</div>
@@ -109,7 +112,7 @@
         											<label class="control-label" for="descripcion">Descripción</label>
         										</div>
         									<div class="col-sm-9">  
-            									<textarea ng-model="vm.nuevoIndic.descripcion" cols="3" id="descripcion" class="form-control"></textarea>
+            									<textarea ng-model="nIndicador.descripcion" cols="3" id="descripcion" class="form-control"></textarea>
         									</div>
         								</div>
     								</div>
@@ -121,23 +124,20 @@
 				</div>
 			</div>
 		</div>
-        <div class="row" ng-show='vm.cargando.notas'>
-			<h5><em>Cargando notas...</em></h5>
-		</div>
-		<div class='row' ng-hide='vm.cargando.notas'>
+		<div class='row' ng-hide='cargando'>
 			<div class='panel'>
 			<div class='panel-body'>
 			<div class='col-xs-12'>
 				<div class='panel panel-default table-responsive'>
 					<table class='table table-bordered centrar-tabla'>
 						<tr>
-							<td  ng-show='vm.esSeleccionada(0)'>
+							<td  ng-show='esSeleccionada(0)'>
 								<table class='table table-bordered centrar-tabla'>
 									<tr>
 										<th style="background-color: hsl(10,100%,70%)">Notas definitivas</th>
 									</tr>
 									<tr>
-										<th>Porcentaje acumulado: //100-vm.porcentajeMaximo//</th>
+										<th>Porcentaje acumulado: //100-porcentajeMaximo//</th>
 									</tr>
 									<tr>
 										<td>
