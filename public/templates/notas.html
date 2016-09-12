@@ -119,7 +119,6 @@
         <div class="row" ng-show='vm.cargando.notas'>
 			<h5><em>Cargando notas...</em></h5>
 		</div>
-		//////////////
         <div class='row' ng-hide='vm.cargando.notas'>
 			<div class='panel'>
 			<div class='panel-body'>
@@ -145,7 +144,7 @@
 												</tr>
 												<tr ng-repeat='alumno in vm.promedios.alumnos'>
 													<td>//alumno.lastname//, //alumno.name//</td>
-													<td ng-repeat='indicador in alumno.indicadores'>//indicador.def | number:1//</td>
+													<td ng-repeat='indica in alumno.indicadores'>//indica.def | number:1//</td>
 													<td>//alumno.def | number:1//</td>
 												</tr>
 											</table>
@@ -220,5 +219,4 @@
 			</div>
 			</div>
 		</div>
-    ////////
 	</div>

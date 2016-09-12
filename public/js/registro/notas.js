@@ -108,19 +108,6 @@
                 $http.get('/registro/notas/indicadores/'+vm.elegido.periodo).then(
 				    function(response){
 				        vm.indicadores=response.data;
-                        // Calculamos el promedio de tipos de nota en cada alumno
-                        for(var i=0; i<vm.indicadores.length; i++){
-                            for(var j=0; j<vm.indicadores[i].alumnos.length; j++){
-                                var defin =0;
-                                for(var k=0; k<vm.indicadores[i].alumnos[j].tipo_nota.length; k++){
-                                    var tempo=parseFloat(vm.indicadores[i].alumnos[j].tipo_nota[k].cal);
-                                    vm.indicadores[i].alumnos[j].tipo_nota[k].cal=tempo;
-                                    defin+=parseFloat(vm.indicadores[i].alumnos[j].tipo_nota[k].cal)
-                                }
-                                defin=defin/vm.indicadores[i].alumnos[j].tipo_nota.length;
-                                vm.indicadores[i].alumnos[j].prom=defin;
-                            }
-                        }
                         vm.cargando.indicadores=false;
                         console.log('Indicadores: Abajo');
                         console.log(vm.indicadores);
@@ -129,6 +116,23 @@
                         console.log('Promedios: Abajo');
                         console.log(vm.promedios);
 				});
+            }
+            
+            // Calcula el promedio de los indicadores
+            function promIndicadores(){
+                // Calculamos el promedio de tipos de nota en cada alumno
+                for(var i=0; i<vm.indicadores.length; i++){
+                    for(var j=0; j<vm.indicadores[i].alumnos.length; j++){
+                        var defin =0;
+                        for(var k=0; k<vm.indicadores[i].alumnos[j].tipo_nota.length; k++){
+                            var tempo=parseFloat(vm.indicadores[i].alumnos[j].tipo_nota[k].cal);
+                            vm.indicadores[i].alumnos[j].tipo_nota[k].cal=tempo;
+                            defin+=parseFloat(vm.indicadores[i].alumnos[j].tipo_nota[k].cal)
+                        }
+                        defin=defin/vm.indicadores[i].alumnos[j].tipo_nota.length;
+                        vm.indicadores[i].alumnos[j].prom=defin;
+                    }
+                }
             }
             
             // Calcula el promedio restante de indicador nuevo
@@ -197,6 +201,8 @@
             // Actualiza la tabla de promedios
             function actPromedio(){
                 vm.promedios={};
+                // Calculamos los promedios de los indicadores
+                promIndicadores();
                 vm.promedios.indicadores=new Array;
                 // Se asignan los indicadores disponibles al promedio
                 for (var x = 0; x < vm.indicadores.length; x++) {
@@ -218,32 +224,9 @@
                 }
                 // Calculando las definitivas de cada indicador por alumno e indicador.
                 
-                for(var i=0; i<vm.promedios.alumnos.length; i++){ // Avanzamos en todos los alumnos del promedio
-                    for (var j=0; j<vm.promedios.alumnos[i].indicadores.length; j++){ // Avanzamos en todos los indicadores
-                        // Se supone que son los mismos indicadores. Por eso se usa el mísmo índex
-                        for(var k=0; k<vm.indicadores[j].alumnos.length; k++){ // Miramos en el indicador de vm.indicadores, para buscar alumno
-                            // Buscamos el alumno y sus notas
-                            if(vm.promedios.alumnos[i].id===vm.indicadores[j].alumnos[k].id){ // Si son iguales entramos.
-                                var tempDef=0;
-                                //console.log('Divisor '+vm.indicadores[j].alumnos[k].tipo_nota.length);
-                                for(var l=0;l<vm.indicadores[j].alumnos[k].tipo_nota.length; l++){
-                                    // Se hace la sumatoria de las calificaciones
-                                    console.log('Paso de tempDef: '+tempDef);
-                                    tempDef+=parseFloat(vm.indicadores[j].alumnos[k].tipo_nota[l].cal);
-                                    
-                                }
-                                // Se divide por el número de notas
-                                console.log('Pre-final de tempDef: '+tempDef);
-                                console.log('Def: '+vm.indicadores[j].alumnos[k].prom);
-                                tempDef=tempDef/vm.indicadores[j].alumnos[k].tipo_nota.length;
-                                console.log('Final de tempDef: '+tempDef);
-                                vm.promedios.alumnos[i].indicadores[j].def=tempDef;
-                                
-                                
-                            }
-                        }
-                    }
-                }
+                
+                console.log('Despues del cálculo de promedios:');
+                console.log(vm.promedios);
                 // Cálculo de definitivas del periodo
                 for(var i=0; i<vm.promedios.alumnos.length; i++){
                     for(var j=0; j<vm.promedios.alumnos[i].indicadores.length; j++){
