@@ -38,6 +38,7 @@
             vm.nuevoIndic={};           // Almacena el nuevo indicador 
             vm.promedios={};            // Almacena los totalizados de los periodos.
             vm.mensajeTipo='';          // Tiene las respuestas de las actualizaciones de tipos de notas, en el modal
+            vm.tempoAlumno=[];          // Matriz de definitivas de alumnos e indicadores.
             
             // Funciones
             vm.inicializador=inicializador;                     // Inicializa las variables;
@@ -223,10 +224,32 @@
                     vm.promedios.alumnos[x].def=0;
                 }
                 // Calculando las definitivas de cada indicador por alumno e indicador.
-                
-                
-                console.log('Despues del cálculo de promedios:');
-                console.log(vm.promedios);
+                angular.forEach(vm.promedios.alumnos,function(alumnoP){
+                    angular.forEach(alumnoP.indicadores, function(indicadorP){
+                        angular.forEach(vm.indicadores, function(indicador){
+                            if(indicador.id===indicadorP.id){
+                                angular.forEach(indicador.alumnos, function(alumnoI){
+                                    // En caso de que el código de alumnos sea igual
+                                    if(alumnoI.id===alumnoP.id){
+                                        // Creando arreglo temporal de promedios
+                                        vm.tempoAlumno.push({
+                                            alumnos_id: alumnoI.id, 
+                                            indicador_id: indicador.id,
+                                            indicador_def: alumnoI.prom,
+                                            indicador_porcentaje: indicador.porcentaje
+                                        });
+                                    }
+                                });
+                                
+                            }
+                        });
+                    });
+                });
+                //Revisar de nuevo la tabla de promedios
+                angular.forEach(vm.promedios.alumnos, function(alumno){
+                    // Retorna un arreglo, que remplaza la referencia anterior de indicadores.
+                    alumno.indicadores=buscarPromIndic(alumno.id);
+                });
                 // Cálculo de definitivas del periodo
                 for(var i=0; i<vm.promedios.alumnos.length; i++){
                     for(var j=0; j<vm.promedios.alumnos[i].indicadores.length; j++){
@@ -235,6 +258,23 @@
                     }
                 }
 			}
+            
+            //Buscador de alumno, indicador y notas, basado en array de salida
+            function buscarPromIndic(alumnoId){
+                var temArray=[];
+                for(var r=0;r<vm.tempoAlumno.length; r++){
+                    // Si encuentra al alumno, lo acumula en un arreglo del alumno
+                    if(vm.tempoAlumno[r].alumnos_id==alumnoId){
+                        temArray.push({
+                            id:vm.tempoAlumno[r].indicador_id, 
+                            def:vm.tempoAlumno[r].indicador_def,
+                            porcentaje: vm.tempoAlumno[r].indicador_porcentaje
+                        });
+                    }
+                }
+                // Retorna lo engontrado del alumno.
+                return temArray;
+            }
             
             /* Fin de funciones sobre indicadores, siguen cálculo de notas */
             
