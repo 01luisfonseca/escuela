@@ -82,7 +82,7 @@
                 vm.materias={};
                 vm.elegido.materia=0;
                 vm.elegido.periodo=0;
-                console.log('Nivel elegido: '+vm.elegido.nivel);
+                //console.log('Nivel elegido: '+vm.elegido.nivel);
                 $http.get('/registro/notas/materias_asignadas/'+vm.elegido.nivel).then(
 				    function(res){
                         vm.materias=res.data;
@@ -93,7 +93,7 @@
             function buscarPeriodos(){
                 vm.elegido.periodo=0;
                 vm.periodos={};
-                console.log('Materia elegida: '+vm.elegido.materia);
+                //console.log('Materia elegida: '+vm.elegido.materia);
                 $http.get('/registro/notas/periodos_asignados/'+vm.elegido.materia).then(
 				function(data){
 					vm.periodos=data.data;
@@ -110,12 +110,10 @@
 				    function(response){
 				        vm.indicadores=response.data;
                         vm.cargando.indicadores=false;
-                        console.log('Indicadores: Abajo');
-                        console.log(vm.indicadores);
+                        //console.log('Indicadores: Abajo');
+                        //console.log(vm.indicadores);
                         porcentajeMax();
                         actPromedio();
-                        console.log('Promedios: Abajo');
-                        console.log(vm.promedios);
 				});
             }
             
@@ -224,6 +222,7 @@
                     vm.promedios.alumnos[x].def=0;
                 }
                 // Calculando las definitivas de cada indicador por alumno e indicador.
+                vm.tempoAlumno=[];
                 angular.forEach(vm.promedios.alumnos,function(alumnoP){
                     angular.forEach(alumnoP.indicadores, function(indicadorP){
                         angular.forEach(vm.indicadores, function(indicador){
@@ -257,6 +256,8 @@
                         vm.promedios.alumnos[i].def+=def;
                     }
                 }
+                //console.log('Promedios: Abajo');
+                //console.log(vm.promedios);
 			}
             
             //Buscador de alumno, indicador y notas, basado en array de salida
@@ -280,7 +281,6 @@
             
             // Crear tipo de nota por indicador
             function crearTipo(indId){
-                console.log('Pase por aqui');
                 vm.cargando.indicadores=true;
                 $http.post('/registro/notas/materias_asignadas/periodos/indicadores/tipo_nota/'+indId).then(function(res){
                     $window.alert(res.data.mensaje);
