@@ -6,6 +6,9 @@
 
 @section('cuerpopanel')
 <div class="panel-group" id="accordion">
+	<div ng-app='asistencia' class="container-fluid">
+		<asist-dir></asist-dir>
+	</div>
 	<div class="container-fluid">
 		<div class="row">
 			<div class="col-sm-6">
@@ -184,13 +187,6 @@
 		@endif
 	</div>
 </div>
-<script type="text/javascript">
-	setInterval(function(){
-			var regex=/\*[\d]+\*/;
-			if (regex.test(document.getelementById("asistenciacode").value)) {
-				document.ingresoasistencia.submit();
-			}
-		},200,JavaScript);
-</script>
+<script src="{{ route('public') }}/js/registro/asistencia.js"></script>
 
 @stop

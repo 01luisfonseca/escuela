@@ -36,4 +36,8 @@ class Alumnos extends Model
     public function notas(){
         return $this->hasMany('App\modelos\Notas');
     }
+
+    public function newasistencia(){
+        return $this->hasMany('App\modelos\Newasistencia');
+    }
 }

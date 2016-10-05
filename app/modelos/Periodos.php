@@ -12,4 +12,8 @@ class Periodos extends Model
     public function niveles_has_periodos(){
     	return $this->hasMany('App\modelos\NivelesHasPeriodos');
     }
+
+    public function newasistencia(){
+        return $this->hasMany('App\modelos\Newasistencia');
+    }
 }
