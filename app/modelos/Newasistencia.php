@@ -12,12 +12,12 @@ class Newasistencia extends Model
     public function alumnos(){
     	return $this->belongsTo('App\modelos\Alumnos');
     }
-
-    public function niveles(){
-    	return $this->belongsTo('App\modelos\Niveles');
-    }
-
+    
     public function periodos(){
     	return $this->belongsTo('App\modelos\Periodos');
+    }
+
+    public function authdevice(){
+        return $this->belongsTo('App\modelos\Authdevice');
     }
 }

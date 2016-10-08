@@ -17,7 +17,4 @@ class Niveles extends Model
     	return $this->hasMany('App\modelos\MateriasHasNiveles');
     }
 
-    public function newasistencia(){
-        return $this->hasMany('App\modelos\Newasistencia');
-    }
 }

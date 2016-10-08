@@ -14,7 +14,6 @@ class CrearTablaNewasistencia extends Migration
     {
         Schema::create('newasistencia', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('niveles_id');
             $table->integer('periodos_id');
             $table->integer('alumnos_id');
             $table->timestamps();

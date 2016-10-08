@@ -50,6 +50,10 @@
               <label class="control-label" for="acudiente">Nombre de Acudiente</label>  
               <input id="acudiente" name="acudiente" type="text" placeholder="Nombre de persona a cargo" value="{{ isset($user->acudiente) ? $user->acudiente : ''}}"class="form-control input-md">   
             </div>
+            <div class="form-group">
+              <label class="control-label" for="tarjeta">Tarjeta</label>  
+              <input id="tarjeta" name="tarjeta" type="text" placeholder="Tarjeta de asistencia" value="{{ isset($user->tarjeta) ? $user->tarjeta : ''}}"class="form-control input-md">   
+            </div>
 <?php 
   if (isset($user)) {
     if ($user->id==1) {

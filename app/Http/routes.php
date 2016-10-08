@@ -25,6 +25,19 @@ Route::get('auth/login', ['as'=>'auth/login','uses'=>'Auth\AuthController@getLog
 Route::post('auth/login', ['as'=>'auth/login','uses'=>'logueo\LogueoController@postLogin']);
 Route::get('auth/logout', ['as'=>'auth/logout','uses'=>'Auth\AuthController@getLogout']);
 
+//Rutas de dispositivos autorizados
+Route::group(['middleware'=>'checkSerial'],function(){
+	Route::group(['namespace'=>'registro'],function(){
+		Route::group(['prefix'=>'{serial}/device'],function(){
+			Route::get('/status',function(){
+				return response('Habilitado',200);
+			});
+			Route::post('/asistencia/{tarjeta}','AsistenciaCtrl@postAsistencia');
+			Route::get('/asistencia/{tarjeta}','AsistenciaCtrl@getDeviceAsistencia');
+		});
+	});
+});
+
 //Rutas de acceso restringido.
 Route::group(['middleware'=>'auth'], function(){
 
@@ -87,6 +100,16 @@ Route::group(['middleware'=>'auth'], function(){
 
 		Route::group(['namespace'=>'registro'],function(){
 
+			// Rutas para dispositivos
+			Route::group(['prefix'=>'device'],function(){
+				Route::get('/','AuthDeviceCtrl@getDevices');
+				Route::get('/{id}','AuthDeviceCtrl@getDevice');
+				Route::get('/{id}/delete','AuthDeviceCtrl@delDevice');
+				Route::post('/nuevo','AuthDeviceCtrl@setDevice');
+				Route::post('/{id}','AuthDeviceCtrl@modDevice');
+				Route::post('/{id}/estado','AuthDeviceCtrl@modEstado');
+			});
+
 			Route::get('/',['as'=>'registro','uses'=>'RegistroController@index']);
 
 			Route::group(['prefix'=>'/alumnos'], function(){
@@ -114,6 +137,11 @@ Route::group(['middleware'=>'auth'], function(){
 				Route::post('/editar',['as'=>'editar_asistencia','uses'=>'RegistroController@getAsistenciaEditar']);
 				Route::put('/editar',['as'=>'editar_asistencia','uses'=>'RegistroController@putAsistenciaEditar']);
 				Route::delete('/editar',['as'=>'editar_asistencia','uses'=>'RegistroController@deleteAsistenciaEditar']);
+			});
+
+			// Rutas para newasistencia.
+			Route::group(['prefix'=>'/newasistencia'],function(){
+				Route::get('/{inicio}','AsistenciaCtrl@getAsistencias');
 			});
 
 			Route::group(['prefix'=>'/rendimiento'], function(){
