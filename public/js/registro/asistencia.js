@@ -77,6 +77,7 @@
 			function getDevices(){
 				$http.get('/registro/device').then(function(res){
 					vm.devices=res;
+					console.log(res);
 				});
 			}
 			function delDevice(id){
@@ -94,7 +95,6 @@
 			function newAsistencias(){
 				$http.get('/registro/newasistencia/'+vm.newAsisActual+'/asist').then(function(res){
 					vm.asistencias=res;
-					console.log(res);
 					getTotalRegAsistencias();
 				});
 			}
