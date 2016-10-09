@@ -18,16 +18,18 @@
 		};
 		return directive;
 
-		function controller($http,$window){
+		function controller($http,$window,$interval){
 			var vm=this;
 			/* Variables locales */
 			vm.muestraHerr=false;
 			vm.muestraAsis=false;
 			vm.clasesAsistencia='col-xs-12';
+			vm.newAsisActual=0;
 			vm.resultado={};
 			vm.devices={};
 			vm.newDevice={};
 			vm.asistencias={};
+			vm.infoAsis={};
 
 			/* Declaración de funciones */
 			vm.verHerr=verHerr;
@@ -36,9 +38,13 @@
 			vm.addDevice=addDevice;
 			vm.getDevices=getDevices;
 			vm.delDevice=delDevice;
+			vm.newAsistencias=newAsistencias;
+			vm.selectNewAsis=selectNewAsis;
 
 			/* Lanzamiento de funciones automáticas */
 			vm.getDevices();
+			vm.newAsistencias();
+			$interval(vm.newAsistencias,5000);
 
 			/* Creación de funciones */
 
@@ -84,6 +90,27 @@
 				vm.resultado=res;
 				console.log(res);
 				vm.getDevices();
+			}
+			function newAsistencias(){
+				$http.get('/registro/newasistencia/'+vm.newAsisActual+'/asist').then(function(res){
+					vm.asistencias=res;
+					getTotalRegAsistencias();
+				});
+			}
+			function getTotalRegAsistencias(){
+				$http.get('/registro/newasistencia/info').then(function(res){
+					vm.infoAsis=res;
+					var pestanas=parseInt(vm.infoAsis.data.registros)/parseInt(vm.infoAsis.data.mostrados);
+					vm.infoAsis.elems=[];
+					pestanas=Math.floor(pestanas);
+					for (var i = 0; i <= pestanas; i++) {
+						vm.infoAsis.elems.push({id: i});
+					}
+				});
+			}
+			function selectNewAsis(pestana){
+				vm.newAsisActual=pestana*50;
+				vm.newAsistencias();
 			}
 		}
 	}

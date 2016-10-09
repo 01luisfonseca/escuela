@@ -141,7 +141,8 @@ Route::group(['middleware'=>'auth'], function(){
 
 			// Rutas para newasistencia.
 			Route::group(['prefix'=>'/newasistencia'],function(){
-				Route::get('/{inicio}','AsistenciaCtrl@getAsistencias');
+				Route::get('/{inicio}/asist','AsistenciaCtrl@getAsistencias');
+				Route::get('/info','AsistenciaCtrl@getInfoAsis');
 			});
 
 			Route::group(['prefix'=>'/rendimiento'], function(){

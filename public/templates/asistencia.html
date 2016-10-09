@@ -1,10 +1,34 @@
 <div class="row">
 	<div class="{{ vm.clasesAsistencia }}">
 		<div class="panel panel-default">
-			<div class="panel-heading"><h4>Admininistración de Asistencias</h4><a href class='btn btn-info btn-xs' ng-click='vm.verAsis()'>Mostrar u ocultar</a></div>
+			<div class="panel-heading">
+				<h4>Asistencias automáticas</h4>
+				<a href class='btn btn-info btn-xs' ng-click='vm.verAsis()'>Mostrar u ocultar</a>
+				<a href class='btn btn-info btn-xs' ng-show='vm.muestraAsis' ng-click='vm.verHerr()'>Ver u ocultar las herramientas</a>
+			</div>
 			<div class="panel-body" ng-show='vm.muestraAsis'>
-				<a href class='btn btn-info btn-xs' ng-click='vm.verHerr()'>Ver u ocultar las herramientas</a>
-				<p>En este espacio se verán los eventos de asistencia</p>
+				<p>A continuación puede observar las asistencias automáticas generadas por el sistema de tarjeta de proximidad</p>
+				<nav aria-label="Page navigation">
+  					<ul class="pagination">
+    					<li ng-repeat='id in vm.infoAsis.elems'><a href ng-click='vm.selectNewAsis(id.id)'>{{ id.id+1 }}</a></li>
+  					</ul>
+				</nav>
+				<div class="table-responsive desplazable-grande">
+				<table class="table table-stripped">
+					<tr>
+						<th>Apellidos</th>
+						<th>Nombres</th>
+						<th>Nivel</th>
+						<th>Fecha de asistencia</th>
+					</tr>
+					<tr ng-repeat='asistencia in vm.asistencias.data'>
+						<td>{{ asistencia.name }}</td>
+						<td>{{ asistencia.lastname }}</td>
+						<td>{{ asistencia.alumnos.niveles.nombre_nivel }}</td>
+						<td>{{ asistencia.created_at }}</td>
+					</tr>
+				</table>
+				</div>
 			</div>
 		</div>
 	</div>

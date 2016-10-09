@@ -49,10 +49,9 @@ class AsistenciaCtrl extends Controller
 	public function getDeviceAsistencia($serial,$tarjeta){
 		$alumno=Users::where('tarjeta',$tarjeta)
 			->with(['alumnos'=>function($query){
-				$query->with('niveles')->first();
+				$query->with('niveles','users')->first();
 			}])
 			->first();
-		//dd($alumno->alumnos[0]);
 		if (!isset($alumno->alumnos[0]->niveles->nombre_nivel)) {
 			return response('NoAlumno',404);
 		}
@@ -70,9 +69,12 @@ class AsistenciaCtrl extends Controller
 			}
 			$ind++;
 		}
+		//dd($alumno);
 		$asistencia=new Newasistencia;
 		$asistencia->authdevice_id=$device->id;
 		$asistencia->alumnos_id=$alumno->alumnos[0]->id;
+		$asistencia->name=$alumno->alumnos[0]->users->name;
+		$asistencia->lastname=$alumno->alumnos[0]->users->lastname;
 		$asistencia->periodos_id=$periodos[$index]->id;
 		$asistencia->save();
 		return response('Asistio',200);
@@ -83,8 +85,21 @@ class AsistenciaCtrl extends Controller
 	}
 
 	public function getAsistencias($inicio=0){
-		$asis=Newasistencia::where('id','!=',0)->skip($inicio)->take(50+$inicio)->get();
+		$mostrados=50;
+		$asis=Newasistencia::where('id','!=',0)
+			->with('alumnos.niveles')
+			->orderBy('created_at','desc')
+			->skip($inicio)
+			->take($mostrados+$inicio)
+			->get();
+		$registros=Newasistencia::all();
 		return $asis->toJson();
+	}
+
+	public function getInfoAsis(){
+		$asis=Newasistencia::all();
+		$col=collect(['registros'=>$asis->count(),'mostrados'=>50]);
+		return $col->toJson();
 	}
 
 	public function getTarjetas($inicio=0){
