@@ -94,6 +94,7 @@
 			function newAsistencias(){
 				$http.get('/registro/newasistencia/'+vm.newAsisActual+'/asist').then(function(res){
 					vm.asistencias=res;
+					console.log(res);
 					getTotalRegAsistencias();
 				});
 			}
