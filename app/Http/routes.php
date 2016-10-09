@@ -102,12 +102,12 @@ Route::group(['middleware'=>'auth'], function(){
 
 			// Rutas para dispositivos
 			Route::group(['prefix'=>'device'],function(){
-				Route::get('/','AuthDeviceCtrl@getDevices');
-				Route::get('/{id}','AuthDeviceCtrl@getDevice');
-				Route::get('/{id}/delete','AuthDeviceCtrl@delDevice');
-				Route::post('/nuevo','AuthDeviceCtrl@setDevice');
-				Route::post('/{id}','AuthDeviceCtrl@modDevice');
-				Route::post('/{id}/estado','AuthDeviceCtrl@modEstado');
+				Route::get('/','AuthdeviceCtrl@getDevices');
+				Route::get('/{id}','AuthdeviceCtrl@getDevice');
+				Route::get('/{id}/delete','AuthdeviceCtrl@delDevice');
+				Route::post('/nuevo','AuthdeviceCtrl@setDevice');
+				Route::post('/{id}','AuthdeviceCtrl@modDevice');
+				Route::post('/{id}/estado','AuthdeviceCtrl@modEstado');
 			});
 
 			Route::get('/',['as'=>'registro','uses'=>'RegistroController@index']);
