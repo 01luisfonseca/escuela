@@ -42,6 +42,10 @@
               <label class="control-label" for="acudiente">Nombre de Acudiente</label>  
               <input id="acudiente" name="acudiente" type="text" placeholder="Nombre de persona a cargo" value="{{ isset($user->acudiente) ? $user->acudiente : ''}}"class="form-control input-md">   
             </div>
+            <div class="form-group">
+              <label class="control-label" for="tarjeta">Tarjeta</label>  
+              <input id="tarjeta" name="tarjeta" type="text" placeholder="Codigo de tarjeta" value="{{ isset($user->tarjeta) ? $user->tarjeta : ''}}"class="form-control input-md">   
+            </div>
             {!! Form::submit('Eliminar definitivamente el usuario',['class' => 'btn btn-danger']) !!}
             <a class="btn btn-info" href="{{ route('usuarios/modificar') }}">Cancelar y volver</a>
             </fieldset>

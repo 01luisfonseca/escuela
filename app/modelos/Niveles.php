@@ -16,4 +16,5 @@ class Niveles extends Model
     public function materias_has_niveles(){
     	return $this->hasMany('App\modelos\MateriasHasNiveles');
     }
+
 }

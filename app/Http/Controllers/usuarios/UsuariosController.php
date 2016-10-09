@@ -59,6 +59,7 @@ class UsuariosController extends Controller
                 ->orWhere('telefono','LIKE','%'.$request->input('busqueda').'%')
                 ->orWhere('acudiente','LIKE','%'.$request->input('busqueda').'%')
                 ->orWhere('tipo_usuario.nombre_tipo','LIKE','%'.$request->input('busqueda').'%')
+                ->orWhere('tarjeta','LIKE','%'.$request->input('busqueda').'%')
                 ->get();
             $resultado='Se ha(n) encontrado '.$user->count().' coincidencia(s)';
             return view('searchUsuario',['respuesta'=>1,'user'=>$user, 'principal'=>Users::with('tipo_usuario')->orderBy('updated_at','DESC')->take(50)->get()]);
@@ -107,6 +108,7 @@ class UsuariosController extends Controller
                 $user->lastname=$request->input('lastname');
                 $user->identificacion=$request->input('identificacion');
                 $user->birday=$request->input('birday');
+                $user->tarjeta=$request->input('tarjeta');
                 $user->email=$request->input('email');
                 $user->telefono=$request->input('telefono');
                 $user->direccion=$request->input('direccion');
@@ -175,6 +177,7 @@ class UsuariosController extends Controller
             $user->password=bcrypt($request->input('password'));
             $user->birday=$request->input('birday');
             $user->email=$request->input('email');
+            $user->tarjeta=$request->input('tarjeta');
             $user->telefono=$request->input('telefono');
             $user->direccion=$request->input('direccion');
             $user->acudiente=$request->input('acudiente');

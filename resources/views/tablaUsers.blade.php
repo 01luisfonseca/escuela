@@ -12,6 +12,7 @@
                         <th>Dirección</th>
                         <th>Acudiente</th>
                         <th>Nivel de acceso</th>
+                        <th>Tarjeta</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
@@ -28,6 +29,7 @@
                         <td>{{ $campo->direccion }}</td>
                         <td>{{ $campo->acudiente }}</td>
                         <td>{{ $campo->tipo_usuario->nombre_tipo }}</td>
+                        <td>{{ $campo->tarjeta }}</td>
                         <td>
                             <form method="POST" action="{{ route('usuarios/editar')}}">
                                 {!! csrf_field() !!}

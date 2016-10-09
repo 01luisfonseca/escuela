@@ -20,7 +20,7 @@
 		<ul class="list-group">
 			@foreach($principal as $campo)
 			@if($campo->id!=1)
-    		<li class="list-group-item"><em>{{$campo->name}} {{$campo->lastname}}</em>. Identificación: {{$campo->identificacion}}. Nivel de acceso: {{ $campo->tipo_usuario->nombre_tipo}}. Fecha modificación: {{ $campo->updated_at }}</li>
+    		<li class="list-group-item"><em>{{$campo->name}} {{$campo->lastname}}</em>. Identificación: {{$campo->identificacion}}. Nivel de acceso: {{ $campo->tipo_usuario->nombre_tipo}}. Tarjeta: {{$campo->tarjeta}}. Fecha modificación: {{ $campo->updated_at }}</li>
     		@endif
     		@endforeach
 		</ul>

@@ -1,0 +1,112 @@
+<div class="row">
+	<div class="{{ vm.clasesAsistencia }}">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h4>Asistencias automáticas</h4>
+				<a href class='btn btn-info btn-xs' ng-click='vm.verAsis()'>Mostrar u ocultar</a>
+				<a href class='btn btn-info btn-xs' ng-show='vm.muestraAsis' ng-click='vm.verHerr()'>Ver u ocultar las herramientas</a>
+			</div>
+			<div class="panel-body" ng-show='vm.muestraAsis'>
+				<p>A continuación puede observar las asistencias automáticas generadas por el sistema de tarjeta de proximidad</p>
+				<nav aria-label="Page navigation">
+  					<ul class="pagination">
+    					<li ng-repeat='id in vm.infoAsis.elems'><a href ng-click='vm.selectNewAsis(id.id)'>{{ id.id+1 }}</a></li>
+  					</ul>
+				</nav>
+				<div class="table-responsive desplazable-grande">
+				<table class="table table-stripped">
+					<tr>
+						<th>Apellidos</th>
+						<th>Nombres</th>
+						<th>Nivel</th>
+						<th>Fecha de asistencia</th>
+					</tr>
+					<tr ng-repeat='asistencia in vm.asistencias.data'>
+						<td>{{ asistencia.name }}</td>
+						<td>{{ asistencia.lastname }}</td>
+						<td>{{ asistencia.alumnos.niveles.nombre_nivel }}</td>
+						<td>{{ asistencia.created_at }}</td>
+					</tr>
+				</table>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="col-sm-4 col-xs-8" ng-show='vm.muestraAsis && vm.muestraHerr'>
+		<div class="panel panel-default">
+			<div class="panel-heading"><h5>Herramientas</h5></div>
+			<div class="panel-body">
+				<button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#DeviceModal">Ver dispositivos</button>
+
+				<!-- Modal Dispositivos-->
+					<div class="modal fade" id="DeviceModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  						<div class="modal-dialog modal-lg" role="document">
+    						<div class="modal-content">
+      							<div class="modal-header">
+        							<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        							<h4 class="modal-title" id="myModalLabel">Creación y modificación de dispositivos</h4>
+      							</div>
+      							<div class="modal-body">
+      								<p>En la siguiente tabla puede verificar y modificar los dispositivos registrados en la plataforma, los cuales están autorizados para registrar las asistencias.</p>
+      								<ul class="list-group">
+      									<li class="list-group-item" ng-repeat='device in vm.devices.data'>
+      										<form class="form-inline" name="formDevice" ng-submit="formDevice.$valid && vm.actDevice($index)" novalidate>
+      											<div class="form-group">
+      												<label for="idserial" class="control-label">Serial: </label>
+      												<input type="text" name="serial" ng-model='device.serial' id='idserial' class="form-control" ng-change='device.visible=true' required>
+      											</div>
+      											<div class="form-group">
+      												<label for="idnombre" class="control-label">  Nombre: </label>
+      												<input type="text" name="nombre" ng-model='device.nombre' id='idnombre' class="form-control" ng-change='device.visible=true' required>
+      											</div>
+      											<div class="form-group">
+      												<label for="iddescri" class="control-label">  Descripción: </label>
+      												<input type="text" name="descripcion" ng-model='device.descripcion' id='iddescri' ng-change='device.visible=true' class="form-control" >
+      											</div>
+      											<div class="form-group">
+      												<label for="idestado" class="control-label">  Estado: </label>
+      												<input type="number" min='0' max="1" name="updated_at" ng-model='device.estado' id='idestado' ng-change='device.visible=true' class="form-control">
+      											</div>
+      											<div class="form-group">
+      												<label for="idupdat" class="control-label">  Actualizado: </label>
+      												<input type="text" name="updated_at" ng-model='device.updated_at' id='idupdat' class="form-control" disabled>
+      											</div>
+      											<div class="form-group">
+      												<label for="idcreated" class="control-label">  Creado: </label>
+      												<input type="text" name="created_at" ng-model='device.created_at' id='idcreated' class="form-control" disabled>
+      											</div>
+      											<button type='submit' class="btn btn-info btn-xs" ng-show='device.visible'>Modificar</button>
+      											<a href class="btn btn-danger btn-xs" ng-click='vm.delDevice($index)'>Eliminar</a>
+      										</form>
+      									</li>
+      									<li href class="list-group-item">
+      										<form class="form-inline" name="formNewDevice" ng-submit="formNewDevice.$valid && vm.addDevice()" novalidate>
+      											<div class="form-group">
+      												<label for="idserial" class="control-label">Serial: </label>
+      												<input type="text" name="serial" ng-model='vm.newDevice.serial' id='idserial' class="form-control" required>
+      											</div>
+      											<div class="form-group">
+      												<label for="idnombre" class="control-label">  Nombre: </label>
+      												<input type="text" name="nombre" ng-model='vm.newDevice.nombre' id='idnombre' class="form-control" required>
+      											</div>
+      											<div class="form-group">
+      												<label for="iddescri" class="control-label">  Descripción: </label>
+      												<input type="text" name="descripcion" ng-model='vm.newDevice.descripcion' id='iddescri' class="form-control" >
+      											</div>										
+      											<button type='submit' class="btn btn-info btn-xs">Crear</button>
+      										</form>
+      									</li>
+      								</ul>
+      							</div>
+      							<div class="modal-footer">
+        							<button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+      							</div>
+    						</div>
+  						</div>
+					</div>
+				<!-- Fin Modal Dispositivos-->
+					
+			</div>
+		</div>
+	</div>
+</div>
