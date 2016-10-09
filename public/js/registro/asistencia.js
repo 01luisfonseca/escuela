@@ -77,6 +77,10 @@
 			function getDevices(){
 				$http.get('/registro/device').then(function(res){
 					vm.devices=res;
+					for (var i = 0; i < vm.devices.data.length; i++) {
+						vm.devices.data[i].estado=parseInt(vm.devices.data[i].estado);
+						vm.devices.data[i].id=parseInt(vm.devices.data[i].id);
+					}
 					console.log(res);
 				});
 			}
