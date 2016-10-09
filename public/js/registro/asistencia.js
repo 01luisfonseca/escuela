@@ -81,7 +81,6 @@
 						vm.devices.data[i].estado=parseInt(vm.devices.data[i].estado);
 						vm.devices.data[i].id=parseInt(vm.devices.data[i].id);
 					}
-					console.log(res);
 				});
 			}
 			function delDevice(id){
