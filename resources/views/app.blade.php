@@ -94,12 +94,6 @@
 				    		@if(Auth::user()->tipo_usuario_id>=6)<li><a href="{{route('gestion-pagos')}}" class="dropdown-toggle">Gestión central</a></li>@endif
 				    	</ul>
 				    </li>
-				    <li class="dropdown">
-				    	<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"  aria-haspopup="true" aria-expanded="false">Mantenimiento<span class="caret"></span></a>
-				    	<ul class="dropdown-menu">
-				    		@if(Auth::user()->tipo_usuario_id>=6)<li><a href="/mantenimiento/general" class="dropdown-toggle">General</a></li>@endif
-				    	</ul>
-				    </li>
 				    @endif
 			    	@if(Auth::user()->tipo_usuario_id>=5)
 			    	<li class="dropdown">
@@ -112,6 +106,14 @@
 				    	</ul>
 				    </li>
 			    	@endif
+			    	 @if(Auth::user()->tipo_usuario_id>=6)
+				    <li class="dropdown">
+				    	<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"  aria-haspopup="true" aria-expanded="false">Opc. Avanzadas<span class="caret"></span></a>
+				    	<ul class="dropdown-menu">
+				    		<li><a href="/mantenimiento/general" class="dropdown-toggle">Mantenimiento General</a></li>
+				    		<li><a href="/optgen" class="dropdown-toggle">Opciones</a></li>
+				    	</ul>
+				    </li>@endif
 				@endif
 			    @endif	    
 				@if (Auth::guest())

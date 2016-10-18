@@ -338,6 +338,14 @@ Route::group(['middleware'=>'auth'], function(){
 		Route::get('/limpiezanotas/{idBajo}/{idAlto}','MantenimientoController@getLimpiarNotasRango');
 	});
 
+	Route::group(['prefix'=>'optgen','namespace'=>'optgen'],function(){
+		Route::get('/','OptgenCtrl@index');
+		Route::get('/opciones','OptgenCtrl@create');
+		Route::post('/opcion','OptgenCtrl@store');
+		Route::post('/opcion/{id}/act','OptgenCtrl@update');
+		Route::post('/opcion/{id}/del','OptgenCtrl@destroy');
+	});
+
 });
 
 
