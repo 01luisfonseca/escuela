@@ -85,7 +85,8 @@ class AsistenciaCtrl extends Controller
 		}else{
 
 			/* Esta parte guarda en otra tabla la lista de asistencias parcialmente. */
-			$card=Tarjetas::where('tarjeta',$tarjeta)->get();
+			$card=Tarjetas::where('tarjeta',$tarjeta)->first();
+			//dd($card);
 			if (!isset($card->id)) {
 				return response('NoAlumno',404);
 			}
