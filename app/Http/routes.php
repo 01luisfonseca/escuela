@@ -34,8 +34,16 @@ Route::group(['middleware'=>'checkSerial'],function(){
 			});
 			Route::post('/asistencia/{tarjeta}','AsistenciaCtrl@postAsistencia');
 			Route::get('/asistencia/{tarjeta}','AsistenciaCtrl@getDeviceAsistencia');
+			Route::get('/asistencia','AsistenciaCtrl@getOnlyTarjetas'); // Probadas para la carga
+			Route::get('/all','AuthdeviceCtrl@getDevices');
 		});
 	});
+});
+
+// Solicitud automática de dispositivos. Este código sale del servidor intermedio al servidor central.
+Route::group(['prefix'=>'autocarga','namespace'=>'auto'],function(){
+	Route::get('/tarjetas','AutoCtrl@getTarjetas');
+	Route::get('/dispositivos','AutoCtrl@getDispositivos');
 });
 
 //Rutas de acceso restringido.
