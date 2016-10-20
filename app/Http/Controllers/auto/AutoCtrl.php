@@ -130,4 +130,18 @@ class AutoCtrl extends Controller
         }
         return response()->json(['mensaje'=>$mensaje]);
     }
+
+    public function enviarAsistencias(){
+        $asiserved=Asiserved::where('tarjeta','!=','')->take(10)->get();
+        foreach ($asiserved as $asis) {
+            $client=new GuzzleHttp\Client();
+            $url='http://'.$this->server->valor.'/'.$asis->lectora.'/device/asistencia/'.$asis->tarjeta;
+            $resp=$client->request('GET',$url);
+            if($resp->getBody()=='Asistio'){
+                $obj=Asiserved::find($asis->id);
+                $obj->delete();
+                echo 'Borrado id '.$asis->id.'. ';
+            }
+        }
+    }
 }

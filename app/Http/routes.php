@@ -44,6 +44,7 @@ Route::group(['middleware'=>'checkSerial'],function(){
 Route::group(['prefix'=>'autocarga','namespace'=>'auto'],function(){
 	Route::get('/tarjetas','AutoCtrl@getTarjetas');
 	Route::get('/dispositivos','AutoCtrl@getDispositivos');
+	Route::get('/syncasis','AutoCtrl@enviarAsistencias');
 });
 
 //Rutas de acceso restringido.
