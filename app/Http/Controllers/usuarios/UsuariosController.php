@@ -145,6 +145,11 @@ class UsuariosController extends Controller
     {
         return TipoUsuario::all();
     }
+    
+    public function perfil()
+    {
+        return $this->editar(auth()->user()->id);
+    }
 
     
     public function postModificaPassword()

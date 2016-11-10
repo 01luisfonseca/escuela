@@ -122,7 +122,7 @@
 				    </li>
 				@else
 		            <li>
-		              	<a class="btn btn-default btn-alert" href="{{ route('usuarios/editar') }}/{{Auth::user()->id}}">Hola, <em>{{Auth::user()->name}} {{Auth::user()->lastname}}</em></a>
+		              	<a class="btn btn-default btn-alert" href="/usuarios/perfil">Hola, <em>{{Auth::user()->name}} {{Auth::user()->lastname}}</em></a>
 		            </li>
 		            <li>
 		            	<a class="btn btn-default btn-danger" href="{{route('auth/logout')}}">Cerrar Sesión</a>

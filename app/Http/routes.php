@@ -54,14 +54,15 @@ Route::group(['middleware'=>'auth'], function(){
 	Route::group(['prefix'=>'usuarios'],function (){
 		Route::get('/',['as'=>'usuarios', 'uses'=>'usuarios\UsuariosController@index']);
 		Route::get('/modificar',['as'=>'usuarios/modificar', 'uses'=>'usuarios\UsuariosController@getBuscar'])->middleware(['administrador', 'coordinador']);
-		Route::post('/modificar',['as'=>'usuarios/modificar', 'uses'=>'usuarios\UsuariosController@postModificar']);
+		Route::post('/modificar',['as'=>'usuarios/modificar', 'uses'=>'usuarios\UsuariosController@postModificar'])->middleware(['administrador']);
 		Route::post('/modificapassword',['as'=>'usuarios/modificapassword', 'uses'=>'usuarios\UsuariosController@postModificaPassword']);
-		Route::get('/crear',['as'=>'usuarios/crear', 'uses'=>'usuarios\UsuariosController@getNuevo'])->middleware(['administrador', 'coordinador']);
+		Route::get('/crear',['as'=>'usuarios/crear', 'uses'=>'usuarios\UsuariosController@getNuevo'])->middleware(['administrador', 'coordinador'])->middleware(['administrador']);
 		Route::post('/registrar',['as'=>'usuarios/registrar', 'uses'=>'usuarios\UsuariosController@postRegistrar']);
 		Route::post('/editar',['as'=>'usuarios/editar', 'uses'=>'usuarios\UsuariosController@gactualizar']);
-		Route::get('/editar/{id}','usuarios\UsuariosController@editar');
-		Route::post('/actualizar',['as'=>'usuarios/actualizar', 'uses'=>'usuarios\UsuariosController@pactualizar']);
-		Route::post('/eliminar',['as'=>'usuarios/eliminar', 'uses'=>'usuarios\UsuariosController@eliminarUsuario']);
+		Route::get('/editar/{id}','usuarios\UsuariosController@editar')->middleware(['administrador']);
+        Route::get('/perfil','usuarios\UsuariosController@perfil');
+		Route::post('/actualizar',['as'=>'usuarios/actualizar', 'uses'=>'usuarios\UsuariosController@pactualizar'])->middleware(['administrador']);
+		Route::post('/eliminar',['as'=>'usuarios/eliminar', 'uses'=>'usuarios\UsuariosController@eliminarUsuario'])->middleware(['administrador']);
 		Route::get('/carnet',['as'=>'usuarios/carnet', 'uses'=>'usuarios\UsuariosController@getCarnet']);
 	});
 
@@ -72,7 +73,7 @@ Route::group(['middleware'=>'auth'], function(){
 			Route::get('/',['as'=>'programas','uses'=>'ProgramasController@index']);
 
 			Route::group(['prefix'=>'/nivel'], function(){
-				Route::get('/crear',['as'=>'crear_nivel','uses'=>'ProgramasController@getNivelCrear'])->middleware(['administrador', 'coordinador']);
+				Route::get('/crear',['as'=>'crear_nivel','uses'=>'ProgramasController@getNivelCrear'])->middleware(['administrador', 'coordinador'])->middleware(['coordinador']);
 				Route::post('/crear',['as'=>'crear_nivel','uses'=>'ProgramasController@postNivelCrear']);
 				Route::post('/editar',['as'=>'editar_nivel','uses'=>'ProgramasController@getNivelEditar']);
 				Route::put('/editar',['as'=>'editar_nivel','uses'=>'ProgramasController@putNivelEditar']);
@@ -80,7 +81,7 @@ Route::group(['middleware'=>'auth'], function(){
 			});
 			
 			Route::group(['prefix'=>'/materia'], function(){
-				Route::get('/crear',['as'=>'crear_materia','uses'=>'ProgramasController@getMateriaCrear'])->middleware(['administrador', 'coordinador']);
+				Route::get('/crear',['as'=>'crear_materia','uses'=>'ProgramasController@getMateriaCrear'])->middleware(['coordinador']);
 				Route::post('/crear',['as'=>'crear_materia','uses'=>'ProgramasController@postMateriaCrear']);
 				Route::post('/editar',['as'=>'editar_materia','uses'=>'ProgramasController@getMateriaEditar']);
 				Route::put('/editar',['as'=>'editar_materia','uses'=>'ProgramasController@putMateriaEditar']);
@@ -88,7 +89,7 @@ Route::group(['middleware'=>'auth'], function(){
 			});
 
 			Route::group(['prefix'=>'/periodo'], function(){
-				Route::get('/crear',['as'=>'crear_periodo','uses'=>'ProgramasController@getPeriodoCrear'])->middleware(['administrador', 'coordinador']);
+				Route::get('/crear',['as'=>'crear_periodo','uses'=>'ProgramasController@getPeriodoCrear'])->middleware(['coordinador']);
 				Route::post('/crear',['as'=>'crear_periodo','uses'=>'ProgramasController@postPeriodoCrear']);
 				Route::post('/editar',['as'=>'editar_periodo','uses'=>'ProgramasController@getPeriodoEditar']);
 				Route::put('/editar',['as'=>'editar_periodo','uses'=>'ProgramasController@putPeriodoEditar']);
@@ -96,7 +97,7 @@ Route::group(['middleware'=>'auth'], function(){
 			});
 
 			Route::group(['prefix'=>'/plan'], function(){
-				Route::get('/crear',['as'=>'crear_plan','uses'=>'ProgramasController@getPlanCrear'])->middleware(['administrador', 'coordinador']);
+				Route::get('/crear',['as'=>'crear_plan','uses'=>'ProgramasController@getPlanCrear'])->middleware(['coordinador']);
 				Route::post('/crear',['as'=>'crear_plan','uses'=>'ProgramasController@postPlanCrear']);
 				Route::post('/editar',['as'=>'editar_plan','uses'=>'ProgramasController@getPlanEditar']);
 				Route::put('/editar',['as'=>'editar_plan','uses'=>'ProgramasController@putPlanEditar']);
@@ -110,7 +111,7 @@ Route::group(['middleware'=>'auth'], function(){
 		Route::group(['namespace'=>'registro'],function(){
 
 			// Rutas para dispositivos
-			Route::group(['prefix'=>'device'],function(){
+			Route::group(['prefix'=>'device','middleware'=>'administrador'],function(){
 				Route::get('/','AuthdeviceCtrl@getDevices');
 				Route::get('/{id}','AuthdeviceCtrl@getDevice');
 				Route::get('/{id}/delete','AuthdeviceCtrl@delDevice');
@@ -122,7 +123,7 @@ Route::group(['middleware'=>'auth'], function(){
 			Route::get('/',['as'=>'registro','uses'=>'RegistroController@index']);
 
 			Route::group(['prefix'=>'/alumnos'], function(){
-				Route::get('/crear',['as'=>'crear_alumno','uses'=>'RegistroController@getAlumnoCrear'])->middleware(['administrador', 'coordinador']);
+				Route::get('/crear',['as'=>'crear_alumno','uses'=>'RegistroController@getAlumnoCrear'])->middleware(['coordinador']);
 				Route::post('/crear',['as'=>'crear_alumno','uses'=>'RegistroController@postAlumnoCrear']);
 				Route::post('/editar',['as'=>'editar_alumno','uses'=>'RegistroController@getAlumnoEditar']);
 				Route::get('/editar/{id}','RegistroController@editarAlumno');
