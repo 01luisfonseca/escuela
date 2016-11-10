@@ -56,7 +56,7 @@ Route::group(['middleware'=>'auth'], function(){
 		Route::get('/modificar',['as'=>'usuarios/modificar', 'uses'=>'usuarios\UsuariosController@getBuscar'])->middleware(['administrador', 'coordinador']);
 		Route::post('/modificar',['as'=>'usuarios/modificar', 'uses'=>'usuarios\UsuariosController@postModificar'])->middleware(['administrador']);
 		Route::post('/modificapassword',['as'=>'usuarios/modificapassword', 'uses'=>'usuarios\UsuariosController@postModificaPassword']);
-		Route::get('/crear',['as'=>'usuarios/crear', 'uses'=>'usuarios\UsuariosController@getNuevo'])->middleware(['administrador', 'coordinador'])->middleware(['administrador']);
+		Route::get('/crear',['as'=>'usuarios/crear', 'uses'=>'usuarios\UsuariosController@getNuevo'])->middleware(['administrador']);
 		Route::post('/registrar',['as'=>'usuarios/registrar', 'uses'=>'usuarios\UsuariosController@postRegistrar']);
 		Route::post('/editar',['as'=>'usuarios/editar', 'uses'=>'usuarios\UsuariosController@gactualizar']);
 		Route::get('/editar/{id}','usuarios\UsuariosController@editar')->middleware(['administrador']);
@@ -72,32 +72,32 @@ Route::group(['middleware'=>'auth'], function(){
 
 			Route::get('/',['as'=>'programas','uses'=>'ProgramasController@index']);
 
-			Route::group(['prefix'=>'/nivel'], function(){
-				Route::get('/crear',['as'=>'crear_nivel','uses'=>'ProgramasController@getNivelCrear'])->middleware(['administrador', 'coordinador'])->middleware(['coordinador']);
+			Route::group(['prefix'=>'/nivel','middleware'=>'coordinador'], function(){
+				Route::get('/crear',['as'=>'crear_nivel','uses'=>'ProgramasController@getNivelCrear']);
 				Route::post('/crear',['as'=>'crear_nivel','uses'=>'ProgramasController@postNivelCrear']);
 				Route::post('/editar',['as'=>'editar_nivel','uses'=>'ProgramasController@getNivelEditar']);
 				Route::put('/editar',['as'=>'editar_nivel','uses'=>'ProgramasController@putNivelEditar']);
 				Route::delete('/editar',['as'=>'editar_nivel','uses'=>'ProgramasController@deleteNivelEditar']);
 			});
 			
-			Route::group(['prefix'=>'/materia'], function(){
-				Route::get('/crear',['as'=>'crear_materia','uses'=>'ProgramasController@getMateriaCrear'])->middleware(['coordinador']);
+			Route::group(['prefix'=>'/materia','middleware'=>'coordinador'], function(){
+				Route::get('/crear',['as'=>'crear_materia','uses'=>'ProgramasController@getMateriaCrear']);
 				Route::post('/crear',['as'=>'crear_materia','uses'=>'ProgramasController@postMateriaCrear']);
 				Route::post('/editar',['as'=>'editar_materia','uses'=>'ProgramasController@getMateriaEditar']);
 				Route::put('/editar',['as'=>'editar_materia','uses'=>'ProgramasController@putMateriaEditar']);
 				Route::delete('/editar',['as'=>'editar_materia','uses'=>'ProgramasController@deleteMateriaEditar']);
 			});
 
-			Route::group(['prefix'=>'/periodo'], function(){
-				Route::get('/crear',['as'=>'crear_periodo','uses'=>'ProgramasController@getPeriodoCrear'])->middleware(['coordinador']);
+			Route::group(['prefix'=>'/periodo','middleware'=>'coordinador'], function(){
+				Route::get('/crear',['as'=>'crear_periodo','uses'=>'ProgramasController@getPeriodoCrear']);
 				Route::post('/crear',['as'=>'crear_periodo','uses'=>'ProgramasController@postPeriodoCrear']);
 				Route::post('/editar',['as'=>'editar_periodo','uses'=>'ProgramasController@getPeriodoEditar']);
 				Route::put('/editar',['as'=>'editar_periodo','uses'=>'ProgramasController@putPeriodoEditar']);
 				Route::delete('/editar',['as'=>'editar_periodo','uses'=>'ProgramasController@deletePeriodoEditar']);
 			});
 
-			Route::group(['prefix'=>'/plan'], function(){
-				Route::get('/crear',['as'=>'crear_plan','uses'=>'ProgramasController@getPlanCrear'])->middleware(['coordinador']);
+			Route::group(['prefix'=>'/plan','middleware'=>'coordinador'], function(){
+				Route::get('/crear',['as'=>'crear_plan','uses'=>'ProgramasController@getPlanCrear']);
 				Route::post('/crear',['as'=>'crear_plan','uses'=>'ProgramasController@postPlanCrear']);
 				Route::post('/editar',['as'=>'editar_plan','uses'=>'ProgramasController@getPlanEditar']);
 				Route::put('/editar',['as'=>'editar_plan','uses'=>'ProgramasController@putPlanEditar']);
@@ -122,27 +122,27 @@ Route::group(['middleware'=>'auth'], function(){
 
 			Route::get('/',['as'=>'registro','uses'=>'RegistroController@index']);
 
-			Route::group(['prefix'=>'/alumnos'], function(){
-				Route::get('/crear',['as'=>'crear_alumno','uses'=>'RegistroController@getAlumnoCrear'])->middleware(['coordinador']);
+			Route::group(['prefix'=>'/alumnos','middleware'=>'coordinador'], function(){
+				Route::get('/crear',['as'=>'crear_alumno','uses'=>'RegistroController@getAlumnoCrear']);
 				Route::post('/crear',['as'=>'crear_alumno','uses'=>'RegistroController@postAlumnoCrear']);
 				Route::post('/editar',['as'=>'editar_alumno','uses'=>'RegistroController@getAlumnoEditar']);
 				Route::get('/editar/{id}','RegistroController@editarAlumno');
-				Route::get('/actualizar',['as'=>'getactualizar_alumno'])->middleware(['administrador', 'coordinador']);
-				Route::get('/actualizar/{alumnos_id}','RegistroController@getAlumnoActual')->middleware(['administrador', 'coordinador']);
+				Route::get('/actualizar',['as'=>'getactualizar_alumno']);
+				Route::get('/actualizar/{alumnos_id}','RegistroController@getAlumnoActual');
 				Route::put('/editar',['as'=>'editar_alumno','uses'=>'RegistroController@putAlumnoEditar']);
 				Route::delete('/editar',['as'=>'editar_alumno','uses'=>'RegistroController@deleteAlumnoEditar']);
 			});
 			
-			Route::group(['prefix'=>'/profesores'], function(){
-				Route::get('/crear',['as'=>'crear_profesor','uses'=>'RegistroController@getProfesorCrear'])->middleware(['administrador', 'coordinador']);
+			Route::group(['prefix'=>'/profesores','middleware'=>'coordinador'], function(){
+				Route::get('/crear',['as'=>'crear_profesor','uses'=>'RegistroController@getProfesorCrear']);
 				Route::post('/crear',['as'=>'crear_profesor','uses'=>'RegistroController@postProfesorCrear']);
 				Route::post('/editar',['as'=>'editar_profesor','uses'=>'RegistroController@getProfesorEditar']);
 				Route::put('/editar',['as'=>'editar_profesor','uses'=>'RegistroController@putProfesorEditar']);
 				Route::delete('/editar',['as'=>'editar_profesor','uses'=>'RegistroController@deleteProfesorEditar']);
 			});
 
-			Route::group(['prefix'=>'/asistencia'], function(){
-				Route::get('/crear',['as'=>'crear_asistencia','uses'=>'RegistroController@getAsistenciaCrear'])->middleware(['administrador', 'coordinador','profesor']);
+			Route::group(['prefix'=>'/asistencia','middleware'=>'profesor'], function(){
+				Route::get('/crear',['as'=>'crear_asistencia','uses'=>'RegistroController@getAsistenciaCrear']);
 				Route::post('/crear',['as'=>'crear_asistencia','uses'=>'RegistroController@postAsistenciaCrear']);
 				Route::post('/editar',['as'=>'editar_asistencia','uses'=>'RegistroController@getAsistenciaEditar']);
 				Route::put('/editar',['as'=>'editar_asistencia','uses'=>'RegistroController@putAsistenciaEditar']);
@@ -150,13 +150,13 @@ Route::group(['middleware'=>'auth'], function(){
 			});
 
 			// Rutas para newasistencia.
-			Route::group(['prefix'=>'/newasistencia'],function(){
+			Route::group(['prefix'=>'/newasistencia','middleware'=>'profesor'],function(){
 				Route::get('/{inicio}/asist','AsistenciaCtrl@getAsistencias');
 				Route::get('/info','AsistenciaCtrl@getInfoAsis');
 			});
 
-			Route::group(['prefix'=>'/rendimiento'], function(){
-				Route::get('/crear',['as'=>'crear_rendimiento','uses'=>'RegistroController@getRendimientoCrear'])->middleware(['administrador', 'coordinador','profesor']);
+			Route::group(['prefix'=>'/rendimiento','middleware'=>'profesor'], function(){
+				Route::get('/crear',['as'=>'crear_rendimiento','uses'=>'RegistroController@getRendimientoCrear']);
 				Route::post('/crear',['as'=>'crear_rendimiento','uses'=>'RegistroController@postRendimientoCrear']);
 				Route::post('/editar',['as'=>'editar_rendimiento','uses'=>'RegistroController@getRendimientoEditar']);
 				Route::put('/editar',['as'=>'editar_rendimiento','uses'=>'RegistroController@putRendimientoEditar']);
@@ -173,14 +173,14 @@ Route::group(['middleware'=>'auth'], function(){
                 Route::get('/materias_asignadas/periodos/notas/{id}','NotasController@getIndicadores');
 				Route::get('/materias_asignadas/periodos/indicadores/{id}/delete','NotasController@borrarIndicador');
 				Route::get('/materias_asignadas/periodos/indicadores/tipo_nota/{id}/delete','NotasController@delTipoNotas');
-                Route::post('/materias_asignadas/periodos/alumnos/rellenar','NotasController@rellenarAlumnosNuevosNivel');
-				Route::post('/materias_asignadas/periodos/indicadores/{nivelesInPeriodosId}','NotasController@setIndicadores');
-				Route::post('/materias_asignadas/periodos/indicadores/{id}/actualizar','NotasController@actIndicadores');
-				Route::post('/materias_asignadas/periodos/indicadores/tipo_nota/{indicadoresId}','NotasController@setTipoNotas');
-				Route::post('/materias_asignadas/periodos/indicadores/tipo_nota/{tipoId}/actualizar','NotasController@actTipoNotas');
-				Route::post('/materias_asignadas/periodos/indicadores/tipo_nota/notas/{tipoNotaId}','NotasController@setNotas');
-				Route::post('/materias_asignadas/periodos/indicadores/tipo_nota/notas/{id}/{cal}/actualizar','NotasController@actNotas');
-				Route::post('/materias_asignadas/periodos/indicadores/tipo_nota/notas/{tipoNotaId}/basica','NotasController@setNotaBasica');
+                Route::post('/materias_asignadas/periodos/alumnos/rellenar','NotasController@rellenarAlumnosNuevosNivel')->middleware(['administrador']);
+				Route::post('/materias_asignadas/periodos/indicadores/{nivelesInPeriodosId}','NotasController@setIndicadores')->middleware(['profesor']);
+				Route::post('/materias_asignadas/periodos/indicadores/{id}/actualizar','NotasController@actIndicadores')->middleware(['profesor']);
+				Route::post('/materias_asignadas/periodos/indicadores/tipo_nota/{indicadoresId}','NotasController@setTipoNotas')->middleware(['profesor']);
+				Route::post('/materias_asignadas/periodos/indicadores/tipo_nota/{tipoId}/actualizar','NotasController@actTipoNotas')->middleware(['profesor']);
+				Route::post('/materias_asignadas/periodos/indicadores/tipo_nota/notas/{tipoNotaId}','NotasController@setNotas')->middleware(['profesor']);
+				Route::post('/materias_asignadas/periodos/indicadores/tipo_nota/notas/{id}/{cal}/actualizar','NotasController@actNotas')->middleware(['profesor']);
+				Route::post('/materias_asignadas/periodos/indicadores/tipo_nota/notas/{tipoNotaId}/basica','NotasController@setNotaBasica')->middleware(['profesor']);
 				Route::get('/niveles_asignados','NotasController@getNivelesAuth');
 				Route::get('/periodos_asignados/{matId}','NotasController@getPeriodosPorMateria');
 				Route::get('/indicadores/{periodoId}','NotasController@getNewIndicadores');
@@ -229,7 +229,7 @@ Route::group(['middleware'=>'auth'], function(){
 		});
 	});
 
-	Route::group(['prefix'=>'listados'],function(){
+	Route::group(['prefix'=>'listados','middleware'=>'coordinador'],function(){
 
 		Route::group(['namespace'=>'listados'],function(){
 
@@ -252,20 +252,20 @@ Route::group(['middleware'=>'auth'], function(){
 
 			Route::get('/',['as'=>'institucion','uses'=>'InstitucionController@index']);
 
-			Route::group(['prefix'=>'/empleado'], function(){
-				Route::get('/crear',['as'=>'crear_empleado','uses'=>'InstitucionController@getEmpleadoCrear'])->middleware(['administrador', 'coordinador']);
+			Route::group(['prefix'=>'/empleado','middleware'=>'coordinador'], function(){
+				Route::get('/crear',['as'=>'crear_empleado','uses'=>'InstitucionController@getEmpleadoCrear']);
 				Route::post('/crear',['as'=>'crear_empleado','uses'=>'InstitucionController@postEmpleadoCrear']);
 				Route::post('/editar',['as'=>'editar_empleado','uses'=>'InstitucionController@getEmpleadoEditar']);
 				Route::put('/editar',['as'=>'editar_empleado','uses'=>'InstitucionController@putEmpleadoEditar']);
 			});
 
-			Route::group(['prefix'=>'/pension'], function(){
-				Route::get('/crear',['as'=>'crear_pension','uses'=>'InstitucionController@getPensionCrear'])->middleware(['administrador', 'coordinador']);
+			Route::group(['prefix'=>'/pension','middleware'=>'coordinador'], function(){
+				Route::get('/crear',['as'=>'crear_pension','uses'=>'InstitucionController@getPensionCrear']);
 				Route::post('/crear',['as'=>'crear_pension','uses'=>'InstitucionController@postPensionCrear']);
 				Route::get('/agregar',['as'=>'getcrear_pension']);
-				Route::get('/agregar/{alumnos_id}','InstitucionController@getPensionActual')->middleware(['administrador', 'coordinador']);
+				Route::get('/agregar/{alumnos_id}','InstitucionController@getPensionActual');
 				Route::get('/imprimir',['as'=>'imprimir_pension']);
-				Route::get('/imprimir/{id}','InstitucionController@imprimePension')->middleware(['administrador', 'coordinador']);
+				Route::get('/imprimir/{id}','InstitucionController@imprimePension');
 				Route::post('/editar',['as'=>'editar_pension','uses'=>'InstitucionController@getPensionEditar']);
 				Route::get('/editar/{alumnos_id}','InstitucionController@getPensionEditarId');
 				Route::put('/editar',['as'=>'editar_pension','uses'=>'InstitucionController@putPensionEditar']);
@@ -273,25 +273,25 @@ Route::group(['middleware'=>'auth'], function(){
 				Route::get('/factura/{factura}','InstitucionController@getFacturaPension');
 			});
 
-			Route::group(['prefix'=>'/matricula'], function(){
-				Route::get('/crear',['as'=>'crear_matricula','uses'=>'InstitucionController@getMatriculaCrear'])->middleware(['administrador', 'coordinador']);
+			Route::group(['prefix'=>'/matricula','middleware'=>'coordinador'], function(){
+				Route::get('/crear',['as'=>'crear_matricula','uses'=>'InstitucionController@getMatriculaCrear']);
 				Route::post('/crear',['as'=>'crear_matricula','uses'=>'InstitucionController@postMatriculaCrear']);
 				Route::post('/editar',['as'=>'editar_matricula','uses'=>'InstitucionController@getMatriculaEditar']);
 				Route::put('/editar',['as'=>'editar_matricula','uses'=>'InstitucionController@putMatriculaEditar']);
 				Route::get('/editar/{alumnos_id}','InstitucionController@getMatriculaEditarId');
 				Route::get('/imprimir',['as'=>'imprimir_matricula']);
-				Route::get('/imprimir/{id}','InstitucionController@imprimeMatricula')->middleware(['administrador', 'coordinador']);
+				Route::get('/imprimir/{id}','InstitucionController@imprimeMatricula');
 				Route::delete('/editar',['as'=>'editar_matricula','uses'=>'InstitucionController@deleteMatriculaEditar']);
 				Route::get('/factura/{factura}','InstitucionController@getFacturaMatricula');
 			});
 
-			Route::group(['prefix'=>'/opagos'],function(){
+			Route::group(['prefix'=>'/opagos','middleware'=>'coordinador'],function(){
 				Route::get('/imprimir/{id}','InstitucionController@imprimeOpagosId');
 				Route::get('/factura/{factura}','InstitucionController@getFacturaOpagos');
 			});
 
-			Route::group(['prefix'=>'/nomina'], function(){
-				Route::get('/crear',['as'=>'crear_nomina','uses'=>'InstitucionController@getNominaCrear'])->middleware(['administrador']);
+			Route::group(['prefix'=>'/nomina','middleware'=>'coordinador'], function(){
+				Route::get('/crear',['as'=>'crear_nomina','uses'=>'InstitucionController@getNominaCrear']);
 				Route::post('/crear',['as'=>'crear_nomina','uses'=>'InstitucionController@postNominaCrear']);
 				Route::post('/editar',['as'=>'editar_nomina','uses'=>'InstitucionController@getNominaEditar']);
 				Route::put('/editar',['as'=>'editar_nomina','uses'=>'InstitucionController@putNominaEditar']);
@@ -299,15 +299,15 @@ Route::group(['middleware'=>'auth'], function(){
 				Route::post('/exportar',['as'=>'exportar_nomina','uses'=>'InstitucionController@exportarNomina']);
 			});
 
-			Route::group(['prefix'=>'/estado'], function(){
-				Route::get('/crear',['as'=>'crear_estado','uses'=>'InstitucionController@getEstadoCrear'])->middleware(['administrador']);
+			Route::group(['prefix'=>'/estado','middleware'=>'administrador'], function(){
+				Route::get('/crear',['as'=>'crear_estado','uses'=>'InstitucionController@getEstadoCrear']);
 				Route::post('/crear',['as'=>'crear_estado','uses'=>'InstitucionController@postEstadoCrear']);
 				Route::post('/editar',['as'=>'editar_estado','uses'=>'InstitucionController@getEstadoEditar']);
 				Route::put('/editar',['as'=>'editar_estado','uses'=>'InstitucionController@putEstadoEditar']);
 				Route::delete('/editar',['as'=>'editar_estado','uses'=>'InstitucionController@deleteEstadoEditar']);
 			});
 
-			Route::group(['prefix'=>'/pago'], function(){
+			Route::group(['prefix'=>'/pago','middleware'=>'coordinador'], function(){
 
 				Route::get('/cierrecaja/{fecha}/{tPension}/{tMatri}/{tOtros}/{tTotal}','InstitucionController@tirillaCaja');
 
@@ -337,7 +337,7 @@ Route::group(['middleware'=>'auth'], function(){
 		});
 	});
 
-	Route::group(['prefix'=>'mantenimiento','namespace'=>'mantenimiento'],function(){
+	Route::group(['prefix'=>'mantenimiento','namespace'=>'mantenimiento','middleware'=>'coordinador'],function(){
 		Route::get('/manual','MantenimientoController@getLimpiarHuerfanosTotal');
 		Route::get('/autonotas/{id}','MantenimientoController@autoLlenarNotas');
 		Route::get('/alumnos/{rango}','MantenimientoController@usuariosRecientes');
@@ -348,7 +348,7 @@ Route::group(['middleware'=>'auth'], function(){
 		Route::get('/limpiezanotas/{idBajo}/{idAlto}','MantenimientoController@getLimpiarNotasRango');
 	});
 
-	Route::group(['prefix'=>'optgen','namespace'=>'optgen'],function(){
+	Route::group(['prefix'=>'optgen','namespace'=>'optgen','middleware'=>'administrador'],function(){
 		Route::get('/','OptgenCtrl@index');
 		Route::get('/opciones','OptgenCtrl@create');
 		Route::post('/opcion','OptgenCtrl@store');
