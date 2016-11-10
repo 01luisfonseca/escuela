@@ -71,9 +71,11 @@
               <label class="control-label" for="tipo_usuario">Tipo de permiso de acceso</label>
               <select id="tipo_usuario" name="tipo_usuario" class="form-control">
                 @if(isset($opciones))
+                  @if(Auth::user()->tipo_usuario_id>=5)
                 @foreach($opciones as $opcion)
                 <option value="{{ $opcion->id }}">{{ $opcion->nombre_tipo }}</option>
                 @endforeach
+                  @endif
                 @else
                 <option value="0">Ninguna</option>
                 @endif
