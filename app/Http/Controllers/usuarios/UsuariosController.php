@@ -122,9 +122,13 @@ class UsuariosController extends Controller
         if($val){
             $user->save();
             $resultado='Usuario Actualizado Exitosamente.';
-            return redirect('usuarios/modificar')->withFlashMessage($resultado)->withErrors($validacion);
+            //return 'Bien Hecho';
+            //return back()->withFlashMessage($resultado)->withErrors($validacion);
+            return redirect('autorizado/home')->withFlashMessage($resultado)->withErrors($validacion);
         }
-        return redirect()->route('usuarios/modificar')->withFlashMessage($resultado)->withErrors($validacion);  /////////
+        //return 'Que hiciste???';
+        //return back()->withFlashMessage($resultado)->withErrors($validacion);
+        return redirect()->route('autorizado/home')->withFlashMessage($resultado)->withErrors($validacion);  /////////
     }
         
     
@@ -154,7 +158,7 @@ class UsuariosController extends Controller
     
     public function postModificaPassword()
     {
-        return view('usuarios/modificar')->with('respuesta',1);
+        return view('usuario/modificar')->with('respuesta',1);
     }
 
     

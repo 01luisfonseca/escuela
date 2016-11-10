@@ -61,7 +61,7 @@ Route::group(['middleware'=>'auth'], function(){
 		Route::post('/editar',['as'=>'usuarios/editar', 'uses'=>'usuarios\UsuariosController@gactualizar']);
 		Route::get('/editar/{id}','usuarios\UsuariosController@editar')->middleware(['administrador']);
         Route::get('/perfil','usuarios\UsuariosController@perfil');
-		Route::post('/actualizar',['as'=>'usuarios/actualizar', 'uses'=>'usuarios\UsuariosController@pactualizar'])->middleware(['administrador']);
+		Route::post('/actualizar',['as'=>'usuarios/actualizar', 'uses'=>'usuarios\UsuariosController@pactualizar'])->middleware(['actuser']);
 		Route::post('/eliminar',['as'=>'usuarios/eliminar', 'uses'=>'usuarios\UsuariosController@eliminarUsuario'])->middleware(['administrador']);
 		Route::get('/carnet',['as'=>'usuarios/carnet', 'uses'=>'usuarios\UsuariosController@getCarnet']);
 	});

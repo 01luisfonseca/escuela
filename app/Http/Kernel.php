@@ -35,6 +35,7 @@ class Kernel extends HttpKernel
         'profesor' => \App\Http\Middleware\ProfesorMiddleware::class,
         'trabajador' => \App\Http\Middleware\TrabajadorMiddleware::class,
         'checkSerial' => \App\Http\Middleware\CheckSerial::class,
+        'actuser' => \App\Http\Middleware\ActUserMiddleware::class,
 
     ];
 }
